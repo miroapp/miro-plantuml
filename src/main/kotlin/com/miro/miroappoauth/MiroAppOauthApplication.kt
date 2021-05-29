@@ -7,5 +7,5 @@ import org.springframework.boot.runApplication
 class MiroAppOauthApplication
 
 fun main(args: Array<String>) {
-	runApplication<MiroAppOauthApplication>(*args)
+    runApplication<MiroAppOauthApplication>(*args)
 }

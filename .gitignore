@@ -31,3 +31,10 @@ build/
 
 ### VS Code ###
 .vscode/
+
+src/main/webapp-sdk1/dist
+src/main/webapp-sdk1/node
+src/main/webapp-sdk1/node_modules
+package-lock.json
+
+
