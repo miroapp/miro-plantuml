@@ -1,0 +1,26 @@
+
+app:
+  miroBaseUrl: https://miro.com
+  miroApiBaseUrl: https://api.miro.com
+  # https://miro.com/marketplace/jira/
+  clientId: 3074457346182612612
+  clientSecret: ""
+
+server:
+  port: 3333
+  # to resolve ngrok-proxied Host header
+  forward-headers-strategy: framework
+
+spring.jackson:
+  serialization:
+    indent-output: true
+
+spring.mvc:
+  log-request-details: true
+
+management.server:
+  port: 8088
+management.endpoints.web:
+  exposure.include: "*"
+  base-path: /manage
+

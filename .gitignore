@@ -32,9 +32,12 @@ build/
 ### VS Code ###
 .vscode/
 
+/dep*.txt
+
 src/main/webapp-sdk1/dist
 src/main/webapp-sdk1/node
 src/main/webapp-sdk1/node_modules
 package-lock.json
 
+application-local.*
 
