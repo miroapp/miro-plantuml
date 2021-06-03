@@ -18,7 +18,7 @@ class MiroAuthClient(
     fun getAccessToken(code: String, redirectUri: String): AccessTokenDto {
         val form = LinkedMultiValueMap<String, String>()
         form.add("grant_type", "authorization_code")
-        form.add("client_id", appProperties.clientId)
+        form.add("client_id", appProperties.clientId.toString())
         form.add("client_secret", appProperties.clientSecret)
         form.add("code", code)
         form.add("redirect_uri", redirectUri)

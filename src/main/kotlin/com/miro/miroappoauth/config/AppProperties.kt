@@ -8,6 +8,7 @@ import org.springframework.boot.context.properties.ConstructorBinding
 data class AppProperties(
     val miroBaseUrl: String,
     val miroApiBaseUrl: String,
-    val clientId: String,
+    val teamId: Long?,
+    val clientId: Long,
     val clientSecret: String
 )

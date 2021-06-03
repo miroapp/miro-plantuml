@@ -52,6 +52,8 @@ class HomeController(
         val accessToken = miroAuthClient.getAccessToken(code, redirectUri)
         storeToken(session, accessToken)
 
+        // todo "Application installed" message banner
+
         initModelAttributes(session, model)
         return "index"
     }
@@ -79,7 +81,8 @@ class HomeController(
         model.addAttribute("clientId", appProperties.clientId)
         model.addAttribute("redirectUri", redirectUri)
         model.addAttribute("webPlugin", webPlugin)
-        model.addAttribute("authorizeLink", getAuthorizeLink(redirectUri, state = userId))
+        model.addAttribute("authorizeUrl", getAuthorizeUrl(redirectUri, state = userId))
+        model.addAttribute("installationUrl", getInstallationUrl())
 
         val accessTokens = Collections.list(session.attributeNames)
             .filter { it.startsWith(ATTR_ACCESS_TOKEN_PREFIX) }
@@ -87,14 +90,28 @@ class HomeController(
         model.addAttribute("accessTokens", accessTokens)
     }
 
-    private fun getAuthorizeLink(redirectUri: URI, state: String): String {
+    private fun getInstallationUrl(): String {
+        if (appProperties.teamId == null) {
+            return "teamId is not set";
+        }
+        return UriComponentsBuilder.fromHttpUrl(appProperties.miroBaseUrl)
+            .path("/app/settings/team/{teamId}/app-settings/{clientId}")
+            .buildAndExpand(appProperties.teamId, appProperties.clientId)
+            .toUriString()
+    }
+
+    private fun getAuthorizeUrl(redirectUri: URI, state: String): String {
         return UriComponentsBuilder.fromHttpUrl(appProperties.miroBaseUrl)
             .path("/oauth/authorize")
             .queryParam("response_type", "code")
             .queryParam("client_id", appProperties.clientId)
             .queryParam("redirect_uri", redirectUri)
             .queryParam("state", state)
-//            .queryParam("team_id", teamId)
+            .apply {
+                if (appProperties.teamId != null) {
+                    queryParam("team_id", appProperties.teamId)
+                }
+            }
             .build(false)
             .encode()
             .toUriString()
