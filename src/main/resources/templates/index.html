@@ -8,7 +8,9 @@
     <!--todo webjars-->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
           integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-    <!--todo webjars-->
+    <!--todo webjars
+    https://fontawesome.com/kits/6aff69578a/use
+    https://fontawesome.com/v5.15/icons?d=gallery&p=2&m=free-->
     <script src="https://kit.fontawesome.com/6aff69578a.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="../css/shards.min.css">
 </head>
@@ -16,6 +18,11 @@
 <div class="container my-2">
     <div class="row">
         <div class="col-md-3">
+
+            <a th:if="${referer} != null" th:href="${referer}">
+                <i class="fas fa-long-arrow-alt-left"></i> <span th:text="${referer}"></span>
+            </a>
+
             <div>
                 <h2 class="my-2">State</h2>
                 <table class="table table-striped table-responsive-md">

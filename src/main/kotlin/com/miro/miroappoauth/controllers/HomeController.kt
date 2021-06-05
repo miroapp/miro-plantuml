@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.miro.miroappoauth.client.MiroAuthClient
 import com.miro.miroappoauth.config.AppProperties
 import com.miro.miroappoauth.dto.AccessTokenDto
+import com.miro.miroappoauth.utils.getCurrentRequest
+import org.springframework.http.HttpHeaders
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
@@ -65,14 +67,17 @@ class HomeController(
     }
 
     private fun initModelAttributes(session: HttpSession, model: Model) {
-        val redirectUri = ServletUriComponentsBuilder.fromCurrentRequest()
+        val request = getCurrentRequest()
+        val redirectUri = ServletUriComponentsBuilder.fromRequest(request)
             .replacePath("/install")
             .query(null)
             .build().toUri()
-        val webPlugin = ServletUriComponentsBuilder.fromCurrentRequest()
+        val webPlugin = ServletUriComponentsBuilder.fromRequest(request)
             .replacePath("/webapp-sdk1/index.html")
             .query(null)
             .build().toUri()
+
+        val referer = request.getHeader(HttpHeaders.REFERER)
         val userId = getUserId(session)
 
         model.addAttribute("sessionId", session.id)
@@ -83,6 +88,7 @@ class HomeController(
         model.addAttribute("webPlugin", webPlugin)
         model.addAttribute("authorizeUrl", getAuthorizeUrl(redirectUri, state = userId))
         model.addAttribute("installationUrl", getInstallationUrl())
+        model.addAttribute("referer", referer)
 
         val accessTokens = Collections.list(session.attributeNames)
             .filter { it.startsWith(ATTR_ACCESS_TOKEN_PREFIX) }
@@ -92,7 +98,7 @@ class HomeController(
 
     private fun getInstallationUrl(): String {
         if (appProperties.teamId == null) {
-            return "teamId is not set";
+            return "teamId is not set AppProperties"
         }
         return UriComponentsBuilder.fromHttpUrl(appProperties.miroBaseUrl)
             .path("/app/settings/team/{teamId}/app-settings/{clientId}")
