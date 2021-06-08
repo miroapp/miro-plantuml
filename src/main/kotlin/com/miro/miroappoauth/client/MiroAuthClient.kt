@@ -2,7 +2,6 @@ package com.miro.miroappoauth.client
 
 import com.miro.miroappoauth.config.AppProperties
 import com.miro.miroappoauth.dto.AccessTokenDto
-import org.springframework.http.RequestEntity.post
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.client.RestTemplate
 
@@ -22,9 +21,6 @@ class MiroAuthClient(
         form.add("code", code)
         form.add("redirect_uri", redirectUri)
 
-        val req = post("/v1/oauth/token")
-            .body(form)
-        val resp = rest.exchange(req, AccessTokenDto::class.java)
-        return resp.body!!
+        return rest.postForObject("/v1/oauth/token", form, AccessTokenDto::class.java)!!
     }
 }
