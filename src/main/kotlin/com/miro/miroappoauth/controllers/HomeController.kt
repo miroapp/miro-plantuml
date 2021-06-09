@@ -87,7 +87,7 @@ class HomeController(
         model.addAttribute("redirectUri", redirectUri)
         model.addAttribute("webPlugin", webPlugin)
         model.addAttribute("authorizeUrl", getAuthorizeUrl(redirectUri, state = userId))
-        model.addAttribute("installationUrl", getInstallationUrl())
+        model.addAttribute("installationManagementUrl", getInstallationManagementUrl(appProperties.teamId))
         model.addAttribute("referer", referer)
 
         val accessTokens = Collections.list(session.attributeNames)
@@ -96,13 +96,13 @@ class HomeController(
         model.addAttribute("accessTokens", accessTokens)
     }
 
-    private fun getInstallationUrl(): String {
-        if (appProperties.teamId == null) {
+    private fun getInstallationManagementUrl(teamId: Long?): String {
+        if (teamId == null) {
             return "teamId is not set AppProperties"
         }
         return UriComponentsBuilder.fromHttpUrl(appProperties.miroBaseUrl)
             .path("/app/settings/team/{teamId}/app-settings/{clientId}")
-            .buildAndExpand(appProperties.teamId, appProperties.clientId)
+            .buildAndExpand(teamId, appProperties.clientId)
             .toUriString()
     }
 
