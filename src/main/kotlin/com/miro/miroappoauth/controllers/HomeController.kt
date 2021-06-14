@@ -54,9 +54,8 @@ class HomeController(
         val accessToken = miroAuthClient.getAccessToken(code, redirectUri)
         storeToken(session, accessToken)
 
-        // todo "Application installed" message banner
-
         initModelAttributes(session, model)
+        model.addAttribute("message", "Application successfully installed")
         return "index"
     }
 
