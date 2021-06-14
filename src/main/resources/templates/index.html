@@ -39,11 +39,11 @@
                     </thead>
                     <tbody>
                     <tr>
-                        <td>Session ID</td>
+                        <td>Session ID (cookies)</td>
                         <td th:text="${sessionId}"></td>
                     </tr>
                     <tr>
-                        <td>User ID</td>
+                        <td>User ID (stored in session)</td>
                         <td th:text="${userId}"></td>
                     </tr>
                     <tr>
@@ -51,7 +51,7 @@
                         <td><a th:href="${miroBaseUrl}" th:text="${miroBaseUrl}"></a></td>
                     </tr>
                     <tr>
-                        <td>Client ID</td>
+                        <td>Client ID (application id)</td>
                         <td th:text="${clientId}"></td>
                     </tr>
                     <tr>
@@ -76,6 +76,7 @@
                 </table>
 
                 <h2 class="my-2">Access tokens</h2>
+                Stored in session
                 <table class="table table-striped table-responsive-md">
                     <thead>
                     <tr>

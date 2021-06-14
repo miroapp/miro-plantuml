@@ -39,6 +39,21 @@ function App() {
         alert("Id token is " + token)
     }
 
+    async function isAuthorized() {
+        const isAuthorized = await miro.isAuthorized()
+        console.error("Is authorized: \"" + isAuthorized + "\"")
+        alert("Is authorized " + isAuthorized)
+    }
+
+    async function authorize() {
+        const token = await miro.authorize({
+            response_type: "code",
+            state: "test-state"
+        })
+        console.error("Authorize token: \"" + token + "\"")
+        alert("Authorize token: \"" + token + "\"")
+    }
+
     return (
         <div className="container centered">
             <button onClick={() => getBoardTitle()}>Get board title</button>
@@ -53,6 +68,10 @@ function App() {
             <button onClick={() => getToken()}>getToken</button>
             <br/>
             <button onClick={() => getIdToken()}>getIdToken</button>
+            <br/>
+            <button onClick={() => isAuthorized()}>isAuthorized</button>
+            <br/>
+            <button onClick={() => authorize()}>authorize</button>
         </div>
     )
 }
