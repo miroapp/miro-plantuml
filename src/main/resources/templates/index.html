@@ -16,12 +16,6 @@
 </head>
 <body>
 
-<div class="container my-2" style="background-color: #CDCDFF" th:if="${message} != null">
-    <h5 class="my-2">
-        <span th:text="${message}"></span>
-    </h5>
-</div>
-
 <div class="container my-2">
     <div class="row">
         <div class="col-md-3">
@@ -29,6 +23,10 @@
             <a th:if="${referer} != null" th:href="${referer}">
                 <i class="fas fa-long-arrow-alt-left"></i> <span th:text="${referer}"></span>
             </a>
+
+            <h5 class="my-2" style="background-color: #CDCDFF" th:if="${message} != null">
+                <span th:text="${message}"></span>
+            </h5>
 
             <div>
                 <h2 class="my-2">State</h2>
