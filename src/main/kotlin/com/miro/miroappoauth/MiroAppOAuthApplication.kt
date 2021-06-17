@@ -16,7 +16,11 @@ class MiroAppOAuthApplication {
 
     @EventListener
     fun onApplicationEvent(event: ServletWebServerInitializedEvent) {
-        log.info("Server started at http://localhost:{}", event.webServer.port)
+        if (event.applicationContext.serverNamespace == "management") {
+            log.info("Management server started at http://localhost:{}/manage", event.webServer.port)
+        } else {
+            log.info("Server started at http://localhost:{}", event.webServer.port)
+        }
     }
 }
 

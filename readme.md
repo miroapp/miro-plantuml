@@ -6,7 +6,7 @@
 `clientId`, `clientSecret` and optional `teamId`.
 - Run spring-boot application (see below instruction if you want to run it in IDEA)
 ```shell
-mvn spring-boot:run -Dspring-boot.run.profiles=local
+mvn clean spring-boot:run -Dspring-boot.run.profiles=local
 ```
 The service will start on localhost:3333
 - Start [ngrok](https://ngrok.com/product) to make your application available on HTTPS from the internet:
