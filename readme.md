@@ -9,7 +9,7 @@
 mvn clean spring-boot:run -Dspring-boot.run.profiles=local
 ```
 The service will start on localhost:3333
-- Start [ngrok](https://ngrok.com/product) to make your application available on HTTPS from the internet:
+- For development purposes, start [ngrok](https://ngrok.com/product) to make your application available on HTTPS from the internet:
 ```shell
 ngrok http --log stdout localhost:3333
 ```
