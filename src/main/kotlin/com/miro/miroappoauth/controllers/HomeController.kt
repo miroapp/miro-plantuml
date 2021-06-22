@@ -95,9 +95,9 @@ class HomeController(
         model.addAttribute("accessTokens", accessTokens)
     }
 
-    private fun getInstallationManagementUrl(teamId: Long?): String {
+    private fun getInstallationManagementUrl(teamId: Long?): String? {
         if (teamId == null) {
-            return "teamId is not set AppProperties"
+            return null
         }
         return UriComponentsBuilder.fromHttpUrl(appProperties.miroBaseUrl)
             .path("/app/settings/team/{teamId}/app-settings/{clientId}")

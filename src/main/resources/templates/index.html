@@ -70,7 +70,12 @@
                     </tr>
                     <tr>
                         <td>Installation management URL</td>
-                        <td><a th:href="${installationManagementUrl}" th:text="${installationManagementUrl}"></a></td>
+                        <td th:if="${installationManagementUrl} != null">
+                            <a th:href="${installationManagementUrl}" th:text="${installationManagementUrl}"></a>
+                        </td>
+                        <td th:if="${installationManagementUrl} == null">
+                            teamId is not set in AppProperties
+                        </td>
                     </tr>
                     </tbody>
                 </table>
