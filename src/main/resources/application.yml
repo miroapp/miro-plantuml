@@ -8,8 +8,6 @@ app:
 
 server:
   port: 3333
-  # to resolve ngrok-proxied Host header
-  forward-headers-strategy: framework
 
 spring.jackson:
   serialization:

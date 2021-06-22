@@ -6,6 +6,7 @@ import com.miro.miroappoauth.config.AppProperties
 import com.miro.miroappoauth.dto.AccessTokenDto
 import com.miro.miroappoauth.utils.getCurrentRequest
 import org.springframework.http.HttpHeaders
+import org.springframework.http.server.ServletServerHttpRequest
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
@@ -66,17 +67,21 @@ class HomeController(
     }
 
     private fun initModelAttributes(session: HttpSession, model: Model) {
-        val request = getCurrentRequest()
-        val redirectUri = ServletUriComponentsBuilder.fromRequest(request)
+        val servletRequest = getCurrentRequest()
+        val request = ServletServerHttpRequest(servletRequest)
+        // note: we call UriComponentsBuilder.fromHttpRequest here
+        // to resolve ngrok-proxied Host header
+        // Alternative solution: "server.forward-headers-strategy: framework" in yaml config
+        val redirectUri = UriComponentsBuilder.fromHttpRequest(request)
             .replacePath("/install")
             .query(null)
             .build().toUri()
-        val webPlugin = ServletUriComponentsBuilder.fromRequest(request)
+        val webPlugin = UriComponentsBuilder.fromHttpRequest(request)
             .replacePath("/webapp-sdk1/index.html")
             .query(null)
             .build().toUri()
 
-        val referer = request.getHeader(HttpHeaders.REFERER)
+        val referer = servletRequest.getHeader(HttpHeaders.REFERER)
         val userId = getUserId(session)
 
         model.addAttribute("sessionId", session.id)
