@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Test Application</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--todo webjars-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <!--todo webjars
+    https://fontawesome.com/kits/6aff69578a/use
+    https://fontawesome.com/v5.15/icons?d=gallery&p=2&m=free-->
+    <script src="https://kit.fontawesome.com/6aff69578a.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="../css/shards.min.css">
+</head>
+<body>
+
+<div class="container my-2">
+    <div class="row">
+        <div class="col-md-3">
+            <div>
+                <h2 class="my-2">HTTP headers</h2>
+                <table class="table table-striped table-responsive-md">
+                    <thead>
+                    <tr>
+                        <th>Header</th>
+                        <th>Value</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr th:each="httpHeader : ${httpHeaders}">
+                        <td>
+                            <pre th:text="${httpHeader.first}"></pre>
+                        </td>
+                        <td>
+                            <pre th:text="${httpHeader.second}"></pre>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
