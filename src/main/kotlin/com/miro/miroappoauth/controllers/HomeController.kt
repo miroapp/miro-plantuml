@@ -2,6 +2,7 @@ package com.miro.miroappoauth.controllers
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.miro.miroappoauth.client.MiroAuthClient
+import com.miro.miroappoauth.client.MiroClient
 import com.miro.miroappoauth.config.AppProperties
 import com.miro.miroappoauth.dto.AccessTokenDto
 import com.miro.miroappoauth.utils.getCurrentRequest
@@ -21,6 +22,7 @@ import javax.servlet.http.HttpSession
 class HomeController(
     private val appProperties: AppProperties,
     private val miroAuthClient: MiroAuthClient,
+    private val miroClient: MiroClient,
     private val objectMapper: ObjectMapper
 ) {
 
@@ -54,10 +56,11 @@ class HomeController(
             .toUriString()
 
         val accessToken = miroAuthClient.getAccessToken(code, redirectUri)
+        val user = miroClient.getSelfUser(accessToken.accessToken)
         storeToken(session, accessToken)
 
         initModelAttributes(session, model)
-        model.addAttribute("message", "Application successfully installed")
+        model.addAttribute("message", "Application successfully installed for ${user.name}")
         return "index"
     }
 
