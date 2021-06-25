@@ -11,7 +11,6 @@ import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
 import java.util.Collections
@@ -48,7 +47,9 @@ class HomeController(
         }
 
         // resolve value by current request URL, but omit query parameters
-        val redirectUri = ServletUriComponentsBuilder.fromCurrentRequest()
+        val servletRequest = getCurrentRequest()
+        val request = ServletServerHttpRequest(servletRequest)
+        val redirectUri = UriComponentsBuilder.fromHttpRequest(request)
             .query(null)
             .toUriString()
 
