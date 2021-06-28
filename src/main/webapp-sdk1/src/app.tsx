@@ -65,7 +65,7 @@ function App() {
             <br/>
             <button onClick={() => getClientId()}>getClientId</button>
             <br/>
-            <button onClick={() => getToken()}>getToken</button>
+            <button onClick={() => getToken()}><del>getToken</del></button>
             <br/>
             <button onClick={() => getIdToken()}>getIdToken</button>
             <br/>
