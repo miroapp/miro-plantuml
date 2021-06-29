@@ -32,6 +32,11 @@ class HomeController(
         model: Model
     ): String? {
         initModelAttributes(session, model)
+        val message = session.getAttribute(SESSION_ATTR_MESSAGE)
+        if (message != null) {
+            model.addAttribute("message", message)
+            session.removeAttribute(SESSION_ATTR_MESSAGE)
+        }
         return "index"
     }
 
@@ -60,14 +65,14 @@ class HomeController(
         storeToken(session, accessToken)
 
         if (accessToken.refreshToken != null) {
+            // todo evict old token
             // todo additional action button, not at once
             val refreshed1 = miroAuthClient.refreshToken(accessToken.refreshToken)
             miroAuthClient.refreshToken(refreshed1.refreshToken!!)
         }
 
-        initModelAttributes(session, model)
-        model.addAttribute("message", "Application successfully installed for ${user.name}")
-        return "index"
+        session.setAttribute(SESSION_ATTR_MESSAGE, "Application successfully installed for ${user.name}")
+        return "redirect:/"
     }
 
     private fun storeToken(session: HttpSession, accessToken: AccessTokenDto) {
@@ -149,4 +154,7 @@ fun getUserId(session: HttpSession): String {
 
 const val SESSION_ATTR_USER_ID = "user_id"
 
+const val SESSION_ATTR_MESSAGE = "message"
+
 const val ATTR_ACCESS_TOKEN_PREFIX = "accessToken-"
+
