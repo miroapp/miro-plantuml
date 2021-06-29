@@ -59,6 +59,12 @@ class HomeController(
         val user = miroClient.getSelfUser(accessToken.accessToken)
         storeToken(session, accessToken)
 
+        if (accessToken.refreshToken != null) {
+            // todo additional action button, not at once
+            val refreshed1 = miroAuthClient.refreshToken(accessToken.refreshToken)
+            miroAuthClient.refreshToken(refreshed1.refreshToken!!)
+        }
+
         initModelAttributes(session, model)
         model.addAttribute("message", "Application successfully installed for ${user.name}")
         return "index"

@@ -6,7 +6,7 @@ import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.client.RestTemplate
 
 /**
- * Reference https://developers.miro.com/reference#oauth-20-authorization-v2
+ * See [Miro REST API Authorization](https://developers.miro.com/reference#oauth-20-authorization-v2).
  */
 class MiroAuthClient(
     private val appProperties: AppProperties,
@@ -20,6 +20,16 @@ class MiroAuthClient(
         form.add("client_secret", appProperties.clientSecret)
         form.add("code", code)
         form.add("redirect_uri", redirectUri)
+
+        return rest.postForObject("/v1/oauth/token", form, AccessTokenDto::class.java)!!
+    }
+
+    fun refreshToken(refreshToken: String): AccessTokenDto {
+        val form = LinkedMultiValueMap<String, String>()
+        form.add("grant_type", "refresh_token")
+        form.add("client_id", appProperties.clientId.toString())
+        form.add("refresh_token", refreshToken)
+        form.add("client_secret", appProperties.clientSecret)
 
         return rest.postForObject("/v1/oauth/token", form, AccessTokenDto::class.java)!!
     }

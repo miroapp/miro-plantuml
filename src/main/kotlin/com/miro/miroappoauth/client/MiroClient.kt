@@ -7,7 +7,7 @@ import org.springframework.http.HttpMethod.GET
 import org.springframework.web.client.RestTemplate
 
 /**
- * Reference https://developers.miro.com/reference#oauth-20-authorization-v2
+ * See [Miro REST API](https://developers.miro.com/reference).
  */
 class MiroClient(
     private val rest: RestTemplate
