@@ -58,19 +58,17 @@ function App() {
     async function callBackend() {
         const url = new URL(window.location.href)
         url.pathname = "/call"
-        // url.search = ""
 
         const token = await miro.getIdToken()
         axios.get(url.href,
             {
-                params: {
-                    id_token: token
+                headers: {
+                    "X-Miro-Token": token
                 }
             })
             .then((response: AxiosResponse) => {
                 console.error("callBackend: \"" + response.data + "\"")
-                alert("callBackend: user=" + response.data.user + "\n" +
-                    "team=" + response.data.team)
+                alert("callBackend: user name=\"" + response.data.name + "\"")
             });
     }
 

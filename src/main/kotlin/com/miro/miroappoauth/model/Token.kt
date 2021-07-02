@@ -5,9 +5,9 @@ import java.io.Serializable
 import java.time.Instant
 
 /**
- * Stored in HttpSession
+ * Stored in TokenStore
  */
-data class SessionToken(
+data class Token(
     val accessToken: AccessTokenDto,
     var state: TokenState,
     val createdTime: Instant,
