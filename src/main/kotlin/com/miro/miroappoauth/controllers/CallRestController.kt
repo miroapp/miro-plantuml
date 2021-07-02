@@ -23,13 +23,12 @@ class CallRestController(
                 .build()
                 .verify(jwt)
         } catch (e: JWTVerificationException) {
-            // todo fix issue with it
-            throw IllegalStateException("Wrong JWT signature")
+            throw IllegalStateException("Wrong JWT signature", e)
         }
 
         val map = LinkedHashMap<String, Any>()
-        map["user"] = jwt.getClaim("user")
-        map["team"] = jwt.getClaim("team")
+        map["user"] = jwt.getClaim("user").asString()
+        map["team"] = jwt.getClaim("team").asString()
         return map
     }
 }
