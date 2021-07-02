@@ -5,6 +5,12 @@ import com.miro.miroappoauth.client.MiroAuthClient
 import com.miro.miroappoauth.client.MiroClient
 import com.miro.miroappoauth.config.AppProperties
 import com.miro.miroappoauth.dto.AccessTokenDto
+import com.miro.miroappoauth.dto.UserDto
+import com.miro.miroappoauth.model.SessionToken
+import com.miro.miroappoauth.model.TokenState
+import com.miro.miroappoauth.model.TokenState.INVALID
+import com.miro.miroappoauth.model.TokenState.NEW
+import com.miro.miroappoauth.model.TokenState.VALID
 import com.miro.miroappoauth.utils.getCurrentRequest
 import org.springframework.http.HttpHeaders
 import org.springframework.http.server.ServletServerHttpRequest
@@ -12,8 +18,10 @@ import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.client.RestClientException
 import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
+import java.time.Instant
 import java.util.Collections
 import java.util.UUID
 import javax.servlet.http.HttpSession
@@ -61,24 +69,60 @@ class HomeController(
             .toUriString()
 
         val accessToken = miroAuthClient.getAccessToken(code, redirectUri)
-        val user = miroClient.getSelfUser(accessToken.accessToken)
         storeToken(session, accessToken)
+
+        val user = getSelfUser(session, accessToken.accessToken)
 
         if (accessToken.refreshToken != null) {
             // todo evict old token
-            // todo additional action button, not at once
-            val refreshed1 = miroAuthClient.refreshToken(accessToken.refreshToken)
-            miroAuthClient.refreshToken(refreshed1.refreshToken!!)
+            // todo additional UI action button
+            refreshToken(session, accessToken)
         }
 
         session.setAttribute(SESSION_ATTR_MESSAGE, "Application successfully installed for ${user.name}")
         return "redirect:/"
     }
 
-    private fun storeToken(session: HttpSession, accessToken: AccessTokenDto) {
+    private fun getSelfUser(session: HttpSession, accessToken: String): UserDto {
+        try {
+            val self = miroClient.getSelfUser(accessToken)
+            updateToken(session, accessToken, VALID)
+            return self
+        } catch (e: RestClientException) {
+            updateToken(session, accessToken, INVALID)
+            throw e
+        }
+    }
+
+    private fun refreshToken(session: HttpSession, accessToken: AccessTokenDto): AccessTokenDto {
+        try {
+            if (accessToken.refreshToken == null) {
+                throw IllegalStateException("refresh_token is null for $accessToken")
+            }
+            val refreshedToken = miroAuthClient.refreshToken(accessToken.refreshToken)
+            storeToken(session, refreshedToken)
+            return refreshedToken
+        } catch (e: RestClientException) {
+            updateToken(session, accessToken.accessToken, INVALID)
+            throw e
+        }
+    }
+
+    private fun storeToken(
+        session: HttpSession,
+        accessToken: AccessTokenDto
+    ) {
         // usually we should not store DTO objects, just to simplify for now
         val attrName = "$ATTR_ACCESS_TOKEN_PREFIX${accessToken.accessToken}"
-        session.setAttribute(attrName, objectMapper.writeValueAsString(accessToken))
+        session.setAttribute(attrName, SessionToken(accessToken, NEW, null))
+    }
+
+    private fun updateToken(session: HttpSession, accessToken: String, state: TokenState) {
+        val attrName = "$ATTR_ACCESS_TOKEN_PREFIX$accessToken"
+        val sessionToken = session.getAttribute(attrName) as SessionToken
+        sessionToken.state = state
+        sessionToken.lastAccessedTime = Instant.now()
+        session.setAttribute(attrName, sessionToken)
     }
 
     private fun initModelAttributes(session: HttpSession, model: Model) {
@@ -111,7 +155,8 @@ class HomeController(
 
         val accessTokens = Collections.list(session.attributeNames)
             .filter { it.startsWith(ATTR_ACCESS_TOKEN_PREFIX) }
-            .map { attrName -> session.getAttribute(attrName) }
+            .map { session.getAttribute(it) }
+            .map { objectMapper.writeValueAsString(it) }
         model.addAttribute("accessTokens", accessTokens)
     }
 
@@ -157,4 +202,3 @@ const val SESSION_ATTR_USER_ID = "user_id"
 const val SESSION_ATTR_MESSAGE = "message"
 
 const val ATTR_ACCESS_TOKEN_PREFIX = "accessToken-"
-
