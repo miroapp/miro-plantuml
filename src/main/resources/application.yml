@@ -8,6 +8,8 @@ app:
 
 server:
   port: 3333
+server.servlet:
+  session.timeout: 48h
 
 spring.jackson:
   serialization:
