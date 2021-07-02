@@ -27,7 +27,7 @@ class HomeController(
 ) {
 
     @GetMapping("/")
-    fun listUsers(
+    fun indexPage(
         session: HttpSession,
         model: Model
     ): String? {

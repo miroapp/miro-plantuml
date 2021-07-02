@@ -7,6 +7,7 @@ import org.springframework.web.client.RestTemplate
 
 /**
  * See [Miro REST API Authorization](https://developers.miro.com/reference#oauth-20-authorization-v2).
+ * Note: we use snake_case for json parsing here.
  */
 class MiroAuthClient(
     private val appProperties: AppProperties,
