@@ -7,6 +7,7 @@ import com.miro.miroappoauth.config.AppProperties
 import com.miro.miroappoauth.dto.AccessTokenDto
 import com.miro.miroappoauth.dto.UserDto
 import com.miro.miroappoauth.model.SessionToken
+import com.miro.miroappoauth.model.TokenRecord
 import com.miro.miroappoauth.model.TokenState
 import com.miro.miroappoauth.model.TokenState.INVALID
 import com.miro.miroappoauth.model.TokenState.NEW
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.RestClientException
 import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
@@ -48,10 +50,9 @@ class HomeController(
         return "index"
     }
 
-    @GetMapping("/install")
+    @GetMapping(ENDPOINT_INSTALL)
     fun install(
         session: HttpSession,
-        model: Model,
         @RequestParam("code") code: String,
         @RequestParam(name = "state", required = false) state: String?
     ): String {
@@ -80,6 +81,18 @@ class HomeController(
         }
 
         session.setAttribute(SESSION_ATTR_MESSAGE, "Application successfully installed for ${user.name}")
+        return "redirect:/"
+    }
+
+    @GetMapping(ENDPOINT_CHECK_VALID_TOKEN)
+    fun checkValidToken(
+        session: HttpSession,
+        @RequestParam("access_token") accessToken: String
+    ): String {
+        try {
+            getSelfUser(session, accessToken)
+        } catch (ignore: HttpClientErrorException.Unauthorized) {
+        }
         return "redirect:/"
     }
 
@@ -113,17 +126,19 @@ class HomeController(
         accessToken: AccessTokenDto
     ) {
         // usually we should not store DTO objects, just to simplify for now
-        val attrName = "$ATTR_ACCESS_TOKEN_PREFIX${accessToken.accessToken}"
+        val attrName = sessionAttrName(accessToken.accessToken)
         session.setAttribute(attrName, SessionToken(accessToken, NEW, null))
     }
 
     private fun updateToken(session: HttpSession, accessToken: String, state: TokenState) {
-        val attrName = "$ATTR_ACCESS_TOKEN_PREFIX$accessToken"
+        val attrName = sessionAttrName(accessToken)
         val sessionToken = session.getAttribute(attrName) as SessionToken
         sessionToken.state = state
         sessionToken.lastAccessedTime = Instant.now()
         session.setAttribute(attrName, sessionToken)
     }
+
+    private fun sessionAttrName(accessToken: String) = "$ATTR_ACCESS_TOKEN_PREFIX$accessToken"
 
     private fun initModelAttributes(session: HttpSession, model: Model) {
         val servletRequest = getCurrentRequest()
@@ -132,7 +147,7 @@ class HomeController(
         // to resolve ngrok-proxied Host header
         // Alternative solution: "server.forward-headers-strategy: framework" in yaml config
         val redirectUri = UriComponentsBuilder.fromHttpRequest(request)
-            .replacePath("/install")
+            .replacePath(ENDPOINT_INSTALL)
             .query(null)
             .build().toUri()
         val webPlugin = UriComponentsBuilder.fromHttpRequest(request)
@@ -153,11 +168,24 @@ class HomeController(
         model.addAttribute("installationManagementUrl", getInstallationManagementUrl(appProperties.teamId))
         model.addAttribute("referer", referer)
 
-        val accessTokens = Collections.list(session.attributeNames)
+        val tokenRecords = Collections.list(session.attributeNames)
             .filter { it.startsWith(ATTR_ACCESS_TOKEN_PREFIX) }
-            .map { session.getAttribute(it) }
-            .map { objectMapper.writeValueAsString(it) }
-        model.addAttribute("accessTokens", accessTokens)
+            .map { session.getAttribute(it) as SessionToken }
+            .map { sessionToken ->
+                val checkValidUrl = UriComponentsBuilder.fromHttpRequest(request)
+                    .replacePath(ENDPOINT_CHECK_VALID_TOKEN)
+                    .query(null)
+                    .queryParam("access_token", sessionToken.accessToken.accessToken)
+                    .build().toUri()
+                TokenRecord(
+                    accessTokenValue = sessionToken.accessToken.accessToken,
+                    accessToken = objectMapper.writeValueAsString(sessionToken.accessToken),
+                    state = sessionToken.state,
+                    lastAccessedTime = sessionToken.lastAccessedTime,
+                    checkValidUrl = checkValidUrl
+                )
+            }
+        model.addAttribute("tokenRecords", tokenRecords)
     }
 
     private fun getInstallationManagementUrl(teamId: Long?): String? {
@@ -202,3 +230,6 @@ const val SESSION_ATTR_USER_ID = "user_id"
 const val SESSION_ATTR_MESSAGE = "message"
 
 const val ATTR_ACCESS_TOKEN_PREFIX = "accessToken-"
+
+const val ENDPOINT_CHECK_VALID_TOKEN = "/check-valid-token"
+const val ENDPOINT_INSTALL = "/install"

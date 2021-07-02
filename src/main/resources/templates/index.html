@@ -83,17 +83,21 @@
                 <h2 class="my-2">Access tokens</h2>
                 Stored in session
                 <table class="table table-striped table-responsive-md">
-                    <thead>
-                    <tr>
-                        <th>Parameter</th>
-                        <th>Value</th>
-                    </tr>
-                    </thead>
                     <tbody>
-                    <tr th:each="accessToken : ${accessTokens}">
-                        <td>Token</td>
+                    <tr th:each="tokenRecord : ${tokenRecords}">
                         <td>
-                            <pre th:text="${accessToken}"></pre>
+                            <pre th:text="${tokenRecord.accessToken}"></pre>
+                        </td>
+                        <td>
+                            <pre th:text="${tokenRecord.state}"></pre>
+                        </td>
+                        <td>
+                            <pre th:text="${tokenRecord.lastAccessedTime}"></pre>
+                        </td>
+                        <td>
+                            <a th:href="${tokenRecord.checkValidUrl}" class="btn btn-primary">
+                                <i class="fas fa-key ml-2"></i> Check valid
+                            </a>
                         </td>
                     </tr>
                     </tbody>
