@@ -10,10 +10,9 @@ import java.time.Instant
 data class SessionToken(
     val accessToken: AccessTokenDto,
     var state: TokenState,
+    val createdTime: Instant,
     var lastAccessedTime: Instant?
-) : Serializable {
-    val created: Instant = Instant.now()
-}
+) : Serializable
 
 enum class TokenState {
     NEW,

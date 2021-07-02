@@ -137,7 +137,7 @@ class HomeController(
     ) {
         // usually we should not store DTO objects, just to simplify for now
         val attrName = sessionAttrName(accessToken.accessToken)
-        session.setAttribute(attrName, SessionToken(accessToken, NEW, null))
+        session.setAttribute(attrName, SessionToken(accessToken, NEW, Instant.now(), null))
     }
 
     private fun updateToken(session: HttpSession, accessToken: String, state: TokenState) {
@@ -181,7 +181,7 @@ class HomeController(
         val tokenRecords = Collections.list(session.attributeNames)
             .filter { it.startsWith(ATTR_ACCESS_TOKEN_PREFIX) }
             .map { session.getAttribute(it) as SessionToken }
-            .sortedByDescending { it.created }
+            .sortedByDescending { it.createdTime }
             .map { sessionToken ->
                 val checkValidUrl = UriComponentsBuilder.fromHttpRequest(request)
                     .replacePath(ENDPOINT_CHECK_VALID_TOKEN)
@@ -198,6 +198,7 @@ class HomeController(
                     accessTokenValue = sessionToken.accessToken.accessToken,
                     accessToken = objectMapper.writeValueAsString(sessionToken.accessToken),
                     state = sessionToken.state,
+                    createdTime = sessionToken.createdTime,
                     lastAccessedTime = sessionToken.lastAccessedTime,
                     checkValidUrl = checkValidUrl,
                     refreshUrl = refreshUrl

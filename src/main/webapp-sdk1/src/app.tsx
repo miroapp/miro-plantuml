@@ -1,5 +1,6 @@
 import * as React from 'react'
 import * as ReactDOM from 'react-dom'
+import axios, {AxiosResponse} from 'axios'
 
 import './styles.css'
 
@@ -54,6 +55,24 @@ function App() {
         alert("Authorize token: \"" + token + "\"")
     }
 
+    async function callBackend() {
+        const url = new URL(window.location.href)
+        url.pathname = "/call"
+        url.search = ""
+
+        const token = await miro.getIdToken()
+        axios.get(url.href,
+            {
+                params: {
+                    id_token: token
+                }
+            })
+            .then((response: AxiosResponse) => {
+                console.error("callBackend: \"" + response.data + "\"")
+                alert("callBackend: \"" + response.data + "\"")
+            });
+    }
+
     return (
         <div className="container centered">
             <button onClick={() => getBoardTitle()}>Get board title</button>
@@ -72,6 +91,8 @@ function App() {
             <button onClick={() => isAuthorized()}>isAuthorized</button>
             <br/>
             <button onClick={() => authorize()}>authorize</button>
+            <br/>
+            <button onClick={() => callBackend()}>call backend</button>
         </div>
     )
 }

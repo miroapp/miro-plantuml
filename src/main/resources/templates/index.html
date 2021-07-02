@@ -92,15 +92,14 @@
                             <pre th:text="${token.state}"></pre>
                         </td>
                         <td>
-                            <pre th:text="${token.lastAccessedTime}"></pre>
+                            Created <pre th:text="${token.createdTime}"></pre><br/>
+                            Last accessed <pre th:text="${token.lastAccessedTime}"></pre>
                         </td>
                         <td>
                             <a th:href="${token.checkValidUrl}" class="btn btn-primary">
                                 <!--todo ajax action-->
                                 <i class="fas fa-angle-double-right"></i> Check valid
-                            </a>
-                        </td>
-                        <td>
+                            </a><br/><br/>
                             <a th:if="${token.refreshUrl} != null" th:href="${token.refreshUrl}" class="btn btn-primary">
                                 <!--todo ajax action-->
                                 <i class="fas fa-redo"></i> Refresh
