@@ -17,5 +17,6 @@ data class TokenRecord(
     val accessToken: String,
     var state: TokenState,
     var lastAccessedTime: Instant?,
-    val checkValidUrl: URI
+    val checkValidUrl: URI,
+    val refreshUrl: URI?
 )

@@ -11,7 +11,9 @@ data class SessionToken(
     val accessToken: AccessTokenDto,
     var state: TokenState,
     var lastAccessedTime: Instant?
-) : Serializable
+) : Serializable {
+    val created: Instant = Instant.now()
+}
 
 enum class TokenState {
     NEW,

@@ -74,12 +74,6 @@ class HomeController(
 
         val user = getSelfUser(session, accessToken.accessToken)
 
-        if (accessToken.refreshToken != null) {
-            // todo evict old token
-            // todo additional UI action button
-            refreshToken(session, accessToken)
-        }
-
         session.setAttribute(SESSION_ATTR_MESSAGE, "Application successfully installed for ${user.name}")
         return "redirect:/"
     }
@@ -91,6 +85,21 @@ class HomeController(
     ): String {
         try {
             getSelfUser(session, accessToken)
+        } catch (ignore: HttpClientErrorException.Unauthorized) {
+        }
+        return "redirect:/"
+    }
+
+    @GetMapping(ENDPOINT_REFRESH_TOKEN)
+    fun refreshToken(
+        session: HttpSession,
+        @RequestParam("access_token") accessToken: String
+    ): String {
+        val attrName = sessionAttrName(accessToken)
+        val sessionToken = session.getAttribute(attrName) as SessionToken?
+            ?: throw IllegalStateException("Missing accessToken $accessToken")
+        try {
+            refreshToken(session, sessionToken.accessToken)
         } catch (ignore: HttpClientErrorException.Unauthorized) {
         }
         return "redirect:/"
@@ -114,6 +123,7 @@ class HomeController(
             }
             val refreshedToken = miroAuthClient.refreshToken(accessToken.refreshToken)
             storeToken(session, refreshedToken)
+            updateToken(session, accessToken.accessToken, INVALID)
             return refreshedToken
         } catch (e: RestClientException) {
             updateToken(session, accessToken.accessToken, INVALID)
@@ -171,18 +181,26 @@ class HomeController(
         val tokenRecords = Collections.list(session.attributeNames)
             .filter { it.startsWith(ATTR_ACCESS_TOKEN_PREFIX) }
             .map { session.getAttribute(it) as SessionToken }
+            .sortedByDescending { it.created }
             .map { sessionToken ->
                 val checkValidUrl = UriComponentsBuilder.fromHttpRequest(request)
                     .replacePath(ENDPOINT_CHECK_VALID_TOKEN)
                     .query(null)
                     .queryParam("access_token", sessionToken.accessToken.accessToken)
                     .build().toUri()
+                val refreshUrl = if (sessionToken.accessToken.refreshToken == null) null else
+                    UriComponentsBuilder.fromHttpRequest(request)
+                        .replacePath(ENDPOINT_REFRESH_TOKEN)
+                        .query(null)
+                        .queryParam("access_token", sessionToken.accessToken.accessToken)
+                        .build().toUri()
                 TokenRecord(
                     accessTokenValue = sessionToken.accessToken.accessToken,
                     accessToken = objectMapper.writeValueAsString(sessionToken.accessToken),
                     state = sessionToken.state,
                     lastAccessedTime = sessionToken.lastAccessedTime,
-                    checkValidUrl = checkValidUrl
+                    checkValidUrl = checkValidUrl,
+                    refreshUrl = refreshUrl
                 )
             }
         model.addAttribute("tokenRecords", tokenRecords)
@@ -232,4 +250,5 @@ const val SESSION_ATTR_MESSAGE = "message"
 const val ATTR_ACCESS_TOKEN_PREFIX = "accessToken-"
 
 const val ENDPOINT_CHECK_VALID_TOKEN = "/check-valid-token"
+const val ENDPOINT_REFRESH_TOKEN = "/refresh-token"
 const val ENDPOINT_INSTALL = "/install"
