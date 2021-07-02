@@ -47,20 +47,24 @@ function App() {
     }
 
     async function authorize() {
+        const redirectUrl = new URL(window.location.href)
+        redirectUrl.pathname = "/install"
+
         const token = await miro.authorize({
             response_type: "code",
-            state: "test-state"
+            state: "test-state",
+            redirect_uri: redirectUrl.href
         })
         console.error("Authorize token: \"" + token + "\"")
         alert("Authorize token: \"" + token + "\"")
     }
 
     async function callBackend() {
-        const url = new URL(window.location.href)
-        url.pathname = "/call"
+        const backendUrl = new URL(window.location.href)
+        backendUrl.pathname = "/call"
 
         const token = await miro.getIdToken()
-        axios.get(url.href,
+        axios.get(backendUrl.href,
             {
                 headers: {
                     "X-Miro-Token": token
