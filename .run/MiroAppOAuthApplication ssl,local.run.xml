@@ -1,0 +1,19 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="MiroAppOAuthApplication ssl,local" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
+    <module name="miro-app-oauth" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="com.miro.miroappoauth.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <option name="SPRING_BOOT_MAIN_CLASS" value="com.miro.miroappoauth.MiroAppOAuthApplication" />
+    <option name="ACTIVE_PROFILES" value="ssl,local" />
+    <option name="ALTERNATIVE_JRE_PATH" />
+    <option name="SHORTEN_COMMAND_LINE" value="NONE" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+      <option name="Maven.BeforeRunTask" enabled="true" file="$PROJECT_DIR$/pom.xml" goal="generate-resources" />
+    </method>
+  </configuration>
+</component>

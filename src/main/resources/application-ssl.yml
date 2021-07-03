@@ -1,0 +1,6 @@
+server.ssl:
+  enabled: true
+  key-store-type: PKCS12
+  key-store: "classpath:cert.p12"
+  key-store-password: password
+  key-alias: cert
