@@ -13,6 +13,7 @@ import com.miro.miroappoauth.model.TokenState.NEW
 import com.miro.miroappoauth.model.TokenState.VALID
 import com.miro.miroappoauth.services.TokenStore
 import com.miro.miroappoauth.utils.getCurrentRequest
+import org.springframework.dao.DuplicateKeyException
 import org.springframework.http.HttpHeaders
 import org.springframework.http.server.ServletServerHttpRequest
 import org.springframework.stereotype.Controller
@@ -133,7 +134,12 @@ class HomeController(
         session: HttpSession,
         accessToken: AccessTokenDto
     ) {
-        tokenStore.store(accessToken.accessToken, Token(accessToken, NEW, Instant.now(), null))
+        val token = Token(accessToken, NEW, Instant.now(), null)
+        try {
+            tokenStore.insert(token)
+        } catch (e: DuplicateKeyException) {
+            tokenStore.update(token)
+        }
         session.setAttribute(sessionAttrName(accessToken.accessToken), "")
     }
 
@@ -141,7 +147,7 @@ class HomeController(
         val token = tokenStore.get(accessToken) ?: throw IllegalStateException("Missing token $accessToken")
         token.state = state
         token.lastAccessedTime = Instant.now()
-        tokenStore.store(accessToken, token)
+        tokenStore.update(token)
     }
 
     private fun sessionAttrName(accessToken: String) = "$ATTR_ACCESS_TOKEN_PREFIX$accessToken"

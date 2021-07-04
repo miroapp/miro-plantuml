@@ -41,3 +41,6 @@ package-lock.json
 
 application-local.*
 
+# h2 databases
+*.mv.db
+*.trace.db

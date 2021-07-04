@@ -1,7 +1,6 @@
 package com.miro.miroappoauth.model
 
 import com.miro.miroappoauth.dto.AccessTokenDto
-import java.io.Serializable
 import java.time.Instant
 
 /**
@@ -12,7 +11,7 @@ data class Token(
     var state: TokenState,
     val createdTime: Instant,
     var lastAccessedTime: Instant?
-) : Serializable
+)
 
 enum class TokenState {
     NEW,

@@ -2,8 +2,10 @@ package com.miro.miroappoauth.dto
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import com.fasterxml.jackson.databind.annotation.JsonNaming
-import java.io.Serializable
 
+/**
+ * Miro response payload Access Token data.
+ */
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
 data class AccessTokenDto(
     val userId: Long,
@@ -13,4 +15,4 @@ data class AccessTokenDto(
     val refreshToken: String?,
     val scope: String,
     val expiresIn: Int
-) : Serializable
+)
