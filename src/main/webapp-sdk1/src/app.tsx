@@ -24,26 +24,25 @@ function App() {
 
     function getClientId() {
         const clientId = miro.getClientId()
-        alert("Client id : " + clientId)
+        alert(`Client id : ${clientId}`)
     }
 
     async function getToken() {
         const token = await miro.getToken()
-        console.error("You should not use this method!!! " +
-            "Token is \"" + token + "\"")
-        alert("Token is " + token)
+        console.error(`You should not use this method!!! Token is "${token}"`)
+        alert(`You should not use this method!!! Token is "${token}"`)
     }
 
     async function getIdToken() {
         const token = await miro.getIdToken()
-        console.error("Id token is \"" + token + "\"")
-        alert("Id token is " + token)
+        console.error(`Id token is "${token}"`)
+        alert(`Id token is ${token}`)
     }
 
     async function isAuthorized() {
         const isAuthorized = await miro.isAuthorized()
-        console.error("Is authorized: \"" + isAuthorized + "\"")
-        alert("Is authorized " + isAuthorized)
+        console.error(`Is authorized: "${isAuthorized}"`)
+        alert(`Is authorized ${isAuthorized}`)
     }
 
     async function authorize() {
@@ -55,8 +54,8 @@ function App() {
             state: "test-state",
             redirect_uri: redirectUrl.href
         })
-        console.error("Authorize token: \"" + token + "\"")
-        alert("Authorize token: \"" + token + "\"")
+        console.error(`Authorize token: "${token}"`)
+        alert(`Authorize token: "${token}"`)
     }
 
     async function callBackend() {
@@ -71,8 +70,19 @@ function App() {
                 }
             })
             .then((response: AxiosResponse) => {
-                console.error("callBackend: \"" + response.data + "\"")
-                alert("callBackend: user name=\"" + response.data.name + "\"")
+                console.error(`callBackend: "${response.data}"`)
+                alert(`callBackend: user name="${response.data.name}"`)
+            })
+            .catch((error) => {
+                let message = error.message
+                if (error.response) {
+                    message = JSON.stringify(error.response.data)
+                } else if (error.request) {
+                    message = "request: " + error.request
+                }
+
+                console.error(`callBackend error: "${message}"`)
+                alert(`callBackend: error "${message}"`)
             });
     }
 

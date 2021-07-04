@@ -6,6 +6,7 @@ import com.auth0.jwt.exceptions.JWTVerificationException
 import com.miro.miroappoauth.client.MiroClient
 import com.miro.miroappoauth.config.AppProperties
 import com.miro.miroappoauth.dto.UserDto
+import com.miro.miroappoauth.exceptions.UnauthorizedException
 import com.miro.miroappoauth.services.TokenStore
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestHeader
@@ -28,13 +29,13 @@ class CallRestController(
                 .build()
                 .verify(jwt)
         } catch (e: JWTVerificationException) {
-            throw IllegalStateException("Wrong JWT signature", e)
+            throw UnauthorizedException("Wrong JWT signature: $e")
         }
 
         val userId = jwt.getClaim("user").asString()
         val teamId = jwt.getClaim("team").asString()
         val token = tokenStore.get(userId = userId.toLong(), teamId = teamId.toLong())
-            ?: throw IllegalStateException("Token not found for userId=$userId, teamId=$teamId")
+            ?: throw UnauthorizedException("Token not found for userId=$userId, teamId=$teamId")
         return miroClient.getSelfUser(token.accessToken.accessToken)
     }
 }
