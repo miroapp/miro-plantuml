@@ -2,12 +2,9 @@ package com.miro.miroappoauth.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.PropertyNamingStrategies.LOWER_CAMEL_CASE
-import com.fasterxml.jackson.databind.PropertyNamingStrategies.SNAKE_CASE
-import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import com.fasterxml.jackson.databind.SerializationFeature.INDENT_OUTPUT
 import com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS
 import com.miro.miroappoauth.client.LoggingInterceptor
-import com.miro.miroappoauth.client.MiroAuthClient
 import com.miro.miroappoauth.client.MiroClient
 import org.springframework.boot.web.client.RootUriTemplateHandler
 import org.springframework.context.annotation.Bean
@@ -22,36 +19,22 @@ import org.springframework.web.client.RestTemplate
 class MiroClientConfig {
 
     @Bean
-    fun miroAuthClient(appProperties: AppProperties): MiroAuthClient {
-        val restTemplate = RestTemplate().apply {
-            requestFactory = HttpClientFactory().defaultRequestFactory()
-            messageConverters = listOf(
-                FormHttpMessageConverter(),
-                MappingJackson2HttpMessageConverter(clientObjectMapper(SNAKE_CASE)),
-                StringHttpMessageConverter()
-            )
-            interceptors = listOf(LoggingInterceptor())
-            uriTemplateHandler = RootUriTemplateHandler(appProperties.miroApiBaseUrl)
-        }
-        return MiroAuthClient(appProperties, restTemplate)
-    }
-
-    @Bean
     fun miroClient(appProperties: AppProperties): MiroClient {
         val restTemplate = RestTemplate().apply {
             requestFactory = HttpClientFactory().defaultRequestFactory()
             messageConverters = listOf(
-                MappingJackson2HttpMessageConverter(clientObjectMapper(LOWER_CAMEL_CASE)),
+                FormHttpMessageConverter(),
+                MappingJackson2HttpMessageConverter(clientObjectMapper()),
                 StringHttpMessageConverter()
             )
             interceptors = listOf(LoggingInterceptor())
             uriTemplateHandler = RootUriTemplateHandler(appProperties.miroApiBaseUrl)
         }
-        return MiroClient(restTemplate)
+        return MiroClient(appProperties, restTemplate)
     }
 
-    private fun clientObjectMapper(propertyNamingStrategy: PropertyNamingStrategy) = Jackson2ObjectMapperBuilder()
-        .propertyNamingStrategy(propertyNamingStrategy)
+    private fun clientObjectMapper() = Jackson2ObjectMapperBuilder()
+        .propertyNamingStrategy(LOWER_CAMEL_CASE)
         .featuresToEnable(INDENT_OUTPUT)
         .featuresToDisable(WRITE_DATES_AS_TIMESTAMPS)
         .build<ObjectMapper>()

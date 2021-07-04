@@ -1,7 +1,6 @@
 package com.miro.miroappoauth.controllers
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.miro.miroappoauth.client.MiroAuthClient
 import com.miro.miroappoauth.client.MiroClient
 import com.miro.miroappoauth.config.AppProperties
 import com.miro.miroappoauth.dto.AccessTokenDto
@@ -32,7 +31,6 @@ import javax.servlet.http.HttpSession
 @Controller
 class HomeController(
     private val appProperties: AppProperties,
-    private val miroAuthClient: MiroAuthClient,
     private val miroClient: MiroClient,
     private val tokenStore: TokenStore,
     private val objectMapper: ObjectMapper
@@ -71,7 +69,7 @@ class HomeController(
             .query(null)
             .toUriString()
 
-        val accessToken = miroAuthClient.getAccessToken(code, redirectUri)
+        val accessToken = miroClient.getAccessToken(code, redirectUri)
         storeToken(session, accessToken)
 
         val user = getSelfUser(accessToken.accessToken)
@@ -121,7 +119,7 @@ class HomeController(
             if (accessToken.refreshToken == null) {
                 throw IllegalStateException("refresh_token is null for $accessToken")
             }
-            val refreshedToken = miroAuthClient.refreshToken(accessToken.refreshToken)
+            val refreshedToken = miroClient.refreshToken(accessToken.refreshToken)
             storeToken(session, refreshedToken)
             updateToken(accessToken.accessToken, INVALID)
             return refreshedToken
