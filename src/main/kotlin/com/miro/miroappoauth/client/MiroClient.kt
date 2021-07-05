@@ -1,13 +1,11 @@
 package com.miro.miroappoauth.client
 
-import com.fasterxml.jackson.databind.JsonNode
 import com.miro.miroappoauth.config.AppProperties
 import com.miro.miroappoauth.dto.AccessTokenDto
 import com.miro.miroappoauth.dto.UserDto
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod.GET
-import org.springframework.http.HttpMethod.POST
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.client.RestTemplate
 
@@ -52,12 +50,10 @@ class MiroClient(
      * [Revoking tokens](https://developers.miro.com/reference#section-revoking-tokens)
      */
     fun revokeToken(accessToken: String) {
-        val request = HttpEntity<Any>(null, HttpHeaders())
+        val form = LinkedMultiValueMap<String, String>()
+        form.add("access_token", accessToken)
 
-        rest.exchange(
-            "/v1/oauth/revoke?access_token={access_token}", POST, request, JsonNode::class.java,
-            accessToken
-        )
+        rest.postForObject("/v1/oauth/revoke", form, Void::class.java)
     }
 
     fun getSelfUser(accessToken: String): UserDto {
@@ -66,4 +62,6 @@ class MiroClient(
 
         return rest.exchange("/v1/users/me", GET, request, UserDto::class.java).body!!
     }
+
+    // todo GET https://api.miro.com/v1/oauth-token
 }

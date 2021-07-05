@@ -21,7 +21,7 @@ import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.client.HttpClientErrorException
-import org.springframework.web.client.RestClientException
+import org.springframework.web.client.HttpClientErrorException.Unauthorized
 import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
 import java.time.Instant
@@ -101,7 +101,7 @@ class HomeController(
         try {
             doRevokeToken(accessToken)
             session.setAttribute(SESSION_ATTR_MESSAGE, "Token revoked")
-        } catch (e: RestClientException) {
+        } catch (e: Unauthorized) {
             session.setAttribute(SESSION_ATTR_MESSAGE, "Failed to revoke token")
         }
         return "redirect:/#access_tokens"
@@ -128,7 +128,7 @@ class HomeController(
             val self = miroClient.getSelfUser(accessToken)
             updateToken(accessToken, VALID)
             return self
-        } catch (e: RestClientException) {
+        } catch (e: Unauthorized) {
             updateToken(accessToken, INVALID)
             throw e
         }
@@ -138,8 +138,7 @@ class HomeController(
         try {
             miroClient.revokeToken(accessToken)
             updateToken(accessToken, INVALID)
-        } catch (e: RestClientException) {
-            // todo more precise catch
+        } catch (e: Unauthorized) {
             updateToken(accessToken, INVALID)
             throw e
         }
@@ -154,7 +153,7 @@ class HomeController(
             storeToken(session, refreshedToken)
             updateToken(accessToken.accessToken, INVALID)
             return refreshedToken
-        } catch (e: RestClientException) {
+        } catch (e: Unauthorized) {
             updateToken(accessToken.accessToken, INVALID)
             throw e
         }
@@ -224,17 +223,17 @@ class HomeController(
                     .query(null)
                     .queryParam("access_token", sessionToken.accessToken.accessToken)
                     .build().toUri()
-                val revokeUrl = UriComponentsBuilder.fromHttpRequest(request)
-                    .replacePath(ENDPOINT_REVOKE_TOKEN)
-                    .query(null)
-                    .queryParam("access_token", sessionToken.accessToken.accessToken)
-                    .build().toUri()
                 val refreshUrl = if (sessionToken.accessToken.refreshToken == null) null else
                     UriComponentsBuilder.fromHttpRequest(request)
                         .replacePath(ENDPOINT_REFRESH_TOKEN)
                         .query(null)
                         .queryParam("access_token", sessionToken.accessToken.accessToken)
                         .build().toUri()
+                val revokeUrl = UriComponentsBuilder.fromHttpRequest(request)
+                    .replacePath(ENDPOINT_REVOKE_TOKEN)
+                    .query(null)
+                    .queryParam("access_token", sessionToken.accessToken.accessToken)
+                    .build().toUri()
                 TokenRecord(
                     accessTokenValue = sessionToken.accessToken.accessToken,
                     accessToken = objectMapper.writeValueAsString(sessionToken.accessToken),
@@ -242,8 +241,8 @@ class HomeController(
                     createdTime = sessionToken.createdTime,
                     lastAccessedTime = sessionToken.lastAccessedTime,
                     checkValidUrl = checkValidUrl,
-                    revokeUrl = revokeUrl,
-                    refreshUrl = refreshUrl
+                    refreshUrl = refreshUrl,
+                    revokeUrl = revokeUrl
                 )
             }
         model.addAttribute("tokenRecords", tokenRecords)

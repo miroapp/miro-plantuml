@@ -82,7 +82,7 @@
                 </h5>
 
                 <h2 class="my-2">Access tokens</h2>
-                Stored in session
+                Associated with current session
                 <table class="table table-striped table-responsive-md">
                     <tbody>
                     <tr th:each="token : ${tokenRecords}">
@@ -101,13 +101,13 @@
                                 <!--todo ajax action-->
                                 <i class="fas fa-angle-double-right"></i> Check valid
                             </a><br/><br/>
-                            <a th:href="${token.revokeUrl}" class="btn btn-primary">
-                                <!--todo ajax action-->
-                                <i class="far fa-times-circle"></i> Revoke
-                            </a><br/><br/>
                             <a th:if="${token.refreshUrl} != null" th:href="${token.refreshUrl}" class="btn btn-primary">
                                 <!--todo ajax action-->
                                 <i class="fas fa-redo"></i> Refresh token
+                            </a><br/><br/>
+                            <a th:href="${token.revokeUrl}" class="btn btn-primary">
+                                <!--todo ajax action-->
+                                <i class="far fa-times-circle"></i> Revoke
                             </a>
                         </td>
                     </tr>
