@@ -76,7 +76,7 @@ class HomeController(
         val user = doGetSelfUser(accessToken.accessToken)
 
         session.setAttribute(SESSION_ATTR_MESSAGE, "Application successfully installed for ${user.name}")
-        return "redirect:/"
+        return "redirect:/#access_tokens"
     }
 
     @GetMapping(ENDPOINT_CHECK_VALID_TOKEN)
@@ -90,7 +90,7 @@ class HomeController(
         } catch (ignore: HttpClientErrorException.Unauthorized) {
             session.setAttribute(SESSION_ATTR_MESSAGE, "Token is not valid")
         }
-        return "redirect:/"
+        return "redirect:/#access_tokens"
     }
 
     @GetMapping(ENDPOINT_REVOKE_TOKEN)
@@ -104,7 +104,7 @@ class HomeController(
         } catch (e: RestClientException) {
             session.setAttribute(SESSION_ATTR_MESSAGE, "Failed to revoke token")
         }
-        return "redirect:/"
+        return "redirect:/#access_tokens"
     }
 
     @GetMapping(ENDPOINT_REFRESH_TOKEN)
@@ -120,7 +120,7 @@ class HomeController(
         } catch (ignore: HttpClientErrorException.Unauthorized) {
             session.setAttribute(SESSION_ATTR_MESSAGE, "Failed to refresh token")
         }
-        return "redirect:/"
+        return "redirect:/#access_tokens"
     }
 
     private fun doGetSelfUser(accessToken: String): UserDto {
