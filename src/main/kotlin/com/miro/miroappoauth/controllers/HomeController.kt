@@ -57,11 +57,11 @@ class HomeController(
         @RequestParam("code") code: String,
         @RequestParam(name = "state", required = false) state: String?
     ): String {
-        val userId = getUserId(session)
-        // todo state signed by JWT
-        if (state != null && state != userId) {
-            throw IllegalArgumentException("Unexpected state $state, should be $userId")
-        }
+//        val userId = getUserId(session)
+//        // todo state signed by JWT
+//        if (state != null && state != userId) {
+//            throw IllegalArgumentException("Unexpected state $state, should be $userId")
+//        }
 
         // resolve value by current request URL, but omit query parameters
         val servletRequest = getCurrentRequest()
