@@ -73,7 +73,7 @@ class HomeController(
         val accessToken = miroClient.getAccessToken(code, redirectUri)
         storeToken(session, accessToken)
 
-        val user = getSelfUser(accessToken.accessToken)
+        val user = doGetSelfUser(accessToken.accessToken)
 
         session.setAttribute(SESSION_ATTR_MESSAGE, "Application successfully installed for ${user.name}")
         return "redirect:/"
@@ -81,11 +81,28 @@ class HomeController(
 
     @GetMapping(ENDPOINT_CHECK_VALID_TOKEN)
     fun checkValidToken(
+        session: HttpSession,
         @RequestParam("access_token") accessToken: String
     ): String {
         try {
-            getSelfUser(accessToken)
+            doGetSelfUser(accessToken)
+            session.setAttribute(SESSION_ATTR_MESSAGE, "Token is valid")
         } catch (ignore: HttpClientErrorException.Unauthorized) {
+            session.setAttribute(SESSION_ATTR_MESSAGE, "Token is not valid")
+        }
+        return "redirect:/"
+    }
+
+    @GetMapping(ENDPOINT_REVOKE_TOKEN)
+    fun revokeToken(
+        session: HttpSession,
+        @RequestParam("access_token") accessToken: String
+    ): String {
+        try {
+            doRevokeToken(accessToken)
+            session.setAttribute(SESSION_ATTR_MESSAGE, "Token revoked")
+        } catch (e: RestClientException) {
+            session.setAttribute(SESSION_ATTR_MESSAGE, "Failed to revoke token")
         }
         return "redirect:/"
     }
@@ -98,13 +115,15 @@ class HomeController(
         val token = tokenStore.get(accessToken)
             ?: throw IllegalStateException("Missing accessToken $accessToken")
         try {
-            refreshToken(session, token.accessToken)
+            doRefreshToken(session, token.accessToken)
+            session.setAttribute(SESSION_ATTR_MESSAGE, "Successfully refreshed")
         } catch (ignore: HttpClientErrorException.Unauthorized) {
+            session.setAttribute(SESSION_ATTR_MESSAGE, "Failed to refresh token")
         }
         return "redirect:/"
     }
 
-    private fun getSelfUser(accessToken: String): UserDto {
+    private fun doGetSelfUser(accessToken: String): UserDto {
         try {
             val self = miroClient.getSelfUser(accessToken)
             updateToken(accessToken, VALID)
@@ -115,7 +134,18 @@ class HomeController(
         }
     }
 
-    private fun refreshToken(session: HttpSession, accessToken: AccessTokenDto): AccessTokenDto {
+    private fun doRevokeToken(accessToken: String) {
+        try {
+            miroClient.revokeToken(accessToken)
+            updateToken(accessToken, INVALID)
+        } catch (e: RestClientException) {
+            // todo more precise catch
+            updateToken(accessToken, INVALID)
+            throw e
+        }
+    }
+
+    private fun doRefreshToken(session: HttpSession, accessToken: AccessTokenDto): AccessTokenDto {
         try {
             if (accessToken.refreshToken == null) {
                 throw IllegalStateException("refresh_token is null for $accessToken")
@@ -194,6 +224,11 @@ class HomeController(
                     .query(null)
                     .queryParam("access_token", sessionToken.accessToken.accessToken)
                     .build().toUri()
+                val revokeUrl = UriComponentsBuilder.fromHttpRequest(request)
+                    .replacePath(ENDPOINT_REVOKE_TOKEN)
+                    .query(null)
+                    .queryParam("access_token", sessionToken.accessToken.accessToken)
+                    .build().toUri()
                 val refreshUrl = if (sessionToken.accessToken.refreshToken == null) null else
                     UriComponentsBuilder.fromHttpRequest(request)
                         .replacePath(ENDPOINT_REFRESH_TOKEN)
@@ -207,6 +242,7 @@ class HomeController(
                     createdTime = sessionToken.createdTime,
                     lastAccessedTime = sessionToken.lastAccessedTime,
                     checkValidUrl = checkValidUrl,
+                    revokeUrl = revokeUrl,
                     refreshUrl = refreshUrl
                 )
             }
@@ -258,4 +294,5 @@ const val ATTR_ACCESS_TOKEN_PREFIX = "accessToken-"
 
 const val ENDPOINT_CHECK_VALID_TOKEN = "/check-valid-token"
 const val ENDPOINT_REFRESH_TOKEN = "/refresh-token"
+const val ENDPOINT_REVOKE_TOKEN = "/revoke-token"
 const val ENDPOINT_INSTALL = "/install"
