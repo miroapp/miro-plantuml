@@ -54,7 +54,7 @@ class TokenStore(
         return jdbc.query(
             "SELECT access_token, access_token_payload, state, created_time, last_accessed_time " +
                 "FROM token WHERE access_token = ?",
-            { rs, _ -> mapToken(rs) }, accessToken
+            mapToken(), accessToken
         ).firstOrNull()
     }
 
@@ -64,17 +64,17 @@ class TokenStore(
                 "FROM token WHERE " +
                 "user_id = ? AND team_id = ? " +
                 "ORDER BY created_time DESC",
-            { rs, _ -> mapToken(rs) }, userId, teamId
+            mapToken(), userId, teamId
         ).firstOrNull()
     }
 
-    private fun mapToken(rs: ResultSet): Token {
+    private fun mapToken() = { rs: ResultSet, _: Int ->
         val accessTokenPayload = objectMapper.readValue(
             rs.getString("access_token_payload"),
             AccessTokenDto::class.java
         )
         val state = TokenState.valueOf(rs.getString("state"))
-        return Token(
+        Token(
             accessTokenPayload, state,
             rs.getTimestamp("created_time").toInstant(),
             rs.getTimestamp("last_accessed_time")?.toInstant()

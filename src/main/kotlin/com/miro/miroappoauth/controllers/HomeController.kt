@@ -1,30 +1,20 @@
 package com.miro.miroappoauth.controllers
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.miro.miroappoauth.client.MiroClient
 import com.miro.miroappoauth.config.AppProperties
 import com.miro.miroappoauth.dto.AccessTokenDto
-import com.miro.miroappoauth.dto.UserDto
-import com.miro.miroappoauth.model.Token
 import com.miro.miroappoauth.model.TokenRecord
-import com.miro.miroappoauth.model.TokenState
-import com.miro.miroappoauth.model.TokenState.INVALID
-import com.miro.miroappoauth.model.TokenState.NEW
-import com.miro.miroappoauth.model.TokenState.VALID
-import com.miro.miroappoauth.services.TokenStore
+import com.miro.miroappoauth.services.TokenService
 import com.miro.miroappoauth.utils.getCurrentRequest
-import org.springframework.dao.DuplicateKeyException
 import org.springframework.http.HttpHeaders
 import org.springframework.http.server.ServletServerHttpRequest
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestParam
-import org.springframework.web.client.HttpClientErrorException
 import org.springframework.web.client.HttpClientErrorException.Unauthorized
 import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
-import java.time.Instant
 import java.util.Collections
 import java.util.UUID
 import javax.servlet.http.HttpSession
@@ -32,8 +22,7 @@ import javax.servlet.http.HttpSession
 @Controller
 class HomeController(
     private val appProperties: AppProperties,
-    private val miroClient: MiroClient,
-    private val tokenStore: TokenStore,
+    private val tokenService: TokenService,
     private val objectMapper: ObjectMapper
 ) {
 
@@ -63,19 +52,17 @@ class HomeController(
 //            throw IllegalArgumentException("Unexpected state $state, should be $userId")
 //        }
 
-        // resolve value by current request URL, but omit query parameters
+        // resolve redirectUri value by current request URL, but omit query parameters
         val servletRequest = getCurrentRequest()
         val request = ServletServerHttpRequest(servletRequest)
         val redirectUri = UriComponentsBuilder.fromHttpRequest(request)
             .query(null)
             .toUriString()
 
-        val accessToken = miroClient.getAccessToken(code, redirectUri)
-        storeToken(session, accessToken)
+        val accessToken = tokenService.getAccessToken(code, redirectUri)
+        storeToSession(session, accessToken)
 
-        val user = doGetSelfUser(accessToken.accessToken)
-
-        session.setAttribute(SESSION_ATTR_MESSAGE, "Application successfully installed for ${user.name}")
+        session.setAttribute(SESSION_ATTR_MESSAGE, "Application successfully installed")
         return "redirect:/#access_tokens"
     }
 
@@ -85,10 +72,25 @@ class HomeController(
         @RequestParam("access_token") accessToken: String
     ): String {
         try {
-            doGetSelfUser(accessToken)
+            tokenService.getSelfUser(accessToken)
             session.setAttribute(SESSION_ATTR_MESSAGE, "Token is valid")
-        } catch (ignore: HttpClientErrorException.Unauthorized) {
+        } catch (e: Unauthorized) {
             session.setAttribute(SESSION_ATTR_MESSAGE, "Token is not valid")
+        }
+        return "redirect:/#access_tokens"
+    }
+
+    @GetMapping(ENDPOINT_REFRESH_TOKEN)
+    fun refreshToken(
+        session: HttpSession,
+        @RequestParam("access_token") accessToken: String
+    ): String {
+        try {
+            val token = tokenService.refreshToken(accessToken)
+            session.setAttribute(SESSION_ATTR_MESSAGE, "Successfully refreshed")
+            storeToSession(session, token)
+        } catch (ignore: Unauthorized) {
+            session.setAttribute(SESSION_ATTR_MESSAGE, "Failed to refresh token")
         }
         return "redirect:/#access_tokens"
     }
@@ -99,7 +101,7 @@ class HomeController(
         @RequestParam("access_token") accessToken: String
     ): String {
         try {
-            doRevokeToken(accessToken)
+            tokenService.revokeToken(accessToken)
             session.setAttribute(SESSION_ATTR_MESSAGE, "Token revoked")
         } catch (e: Unauthorized) {
             session.setAttribute(SESSION_ATTR_MESSAGE, "Failed to revoke token")
@@ -107,79 +109,10 @@ class HomeController(
         return "redirect:/#access_tokens"
     }
 
-    @GetMapping(ENDPOINT_REFRESH_TOKEN)
-    fun refreshToken(
-        session: HttpSession,
-        @RequestParam("access_token") accessToken: String
-    ): String {
-        val token = tokenStore.get(accessToken)
-            ?: throw IllegalStateException("Missing accessToken $accessToken")
-        try {
-            doRefreshToken(session, token.accessToken)
-            session.setAttribute(SESSION_ATTR_MESSAGE, "Successfully refreshed")
-        } catch (ignore: HttpClientErrorException.Unauthorized) {
-            session.setAttribute(SESSION_ATTR_MESSAGE, "Failed to refresh token")
-        }
-        return "redirect:/#access_tokens"
+    private fun storeToSession(session: HttpSession, accessTokenDto: AccessTokenDto) {
+        val attrName = "$ATTR_ACCESS_TOKEN_PREFIX${accessTokenDto.accessToken}"
+        session.setAttribute(attrName, "")
     }
-
-    private fun doGetSelfUser(accessToken: String): UserDto {
-        try {
-            val self = miroClient.getSelfUser(accessToken)
-            updateToken(accessToken, VALID)
-            return self
-        } catch (e: Unauthorized) {
-            updateToken(accessToken, INVALID)
-            throw e
-        }
-    }
-
-    private fun doRevokeToken(accessToken: String) {
-        try {
-            miroClient.revokeToken(accessToken)
-            updateToken(accessToken, INVALID)
-        } catch (e: Unauthorized) {
-            updateToken(accessToken, INVALID)
-            throw e
-        }
-    }
-
-    private fun doRefreshToken(session: HttpSession, accessToken: AccessTokenDto): AccessTokenDto {
-        try {
-            if (accessToken.refreshToken == null) {
-                throw IllegalStateException("refresh_token is null for $accessToken")
-            }
-            val refreshedToken = miroClient.refreshToken(accessToken.refreshToken)
-            storeToken(session, refreshedToken)
-            updateToken(accessToken.accessToken, INVALID)
-            return refreshedToken
-        } catch (e: Unauthorized) {
-            updateToken(accessToken.accessToken, INVALID)
-            throw e
-        }
-    }
-
-    private fun storeToken(
-        session: HttpSession,
-        accessToken: AccessTokenDto
-    ) {
-        val token = Token(accessToken, NEW, Instant.now(), null)
-        try {
-            tokenStore.insert(token)
-        } catch (e: DuplicateKeyException) {
-            tokenStore.update(token)
-        }
-        session.setAttribute(sessionAttrName(accessToken.accessToken), "")
-    }
-
-    private fun updateToken(accessToken: String, state: TokenState) {
-        val token = tokenStore.get(accessToken) ?: throw IllegalStateException("Missing token $accessToken")
-        token.state = state
-        token.lastAccessedTime = Instant.now()
-        tokenStore.update(token)
-    }
-
-    private fun sessionAttrName(accessToken: String) = "$ATTR_ACCESS_TOKEN_PREFIX$accessToken"
 
     private fun initModelAttributes(session: HttpSession, model: Model) {
         val servletRequest = getCurrentRequest()
@@ -213,7 +146,7 @@ class HomeController(
             .filter { it.startsWith(ATTR_ACCESS_TOKEN_PREFIX) }
             .map {
                 val accessToken = it.substring(ATTR_ACCESS_TOKEN_PREFIX.length)
-                tokenStore.get(accessToken)
+                tokenService.getToken(accessToken)
             }
             .filterNotNull()
             .sortedByDescending { it.createdTime }
