@@ -26,6 +26,8 @@ class CallRestController(
         val jwt = JWT.decode(idToken)
         try {
             JWT.require(Algorithm.HMAC256(appProperties.clientSecret))
+                // to avoid clock minor unsync issues
+                .acceptLeeway(180)
                 .build()
                 .verify(jwt)
         } catch (e: JWTVerificationException) {
