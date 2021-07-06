@@ -1,7 +1,7 @@
 package com.miro.miroappoauth.model
 
 import java.net.URI
-import java.time.ZonedDateTime
+import java.time.OffsetDateTime
 
 /**
  * For UI view.
@@ -16,8 +16,8 @@ data class TokenRecord(
      */
     val accessToken: String,
     var state: String,
-    val createdTime: ZonedDateTime,
-    var lastAccessedTime: ZonedDateTime?,
+    val createdTime: OffsetDateTime,
+    var lastAccessedTime: OffsetDateTime?,
     val checkValidUrl: URI,
     val refreshUrl: URI?,
     val revokeUrl: URI

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.client.HttpClientErrorException.Unauthorized
 import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
+import java.time.OffsetDateTime
 import java.time.ZoneId
 import java.util.Collections
 import java.util.UUID
@@ -174,8 +175,9 @@ class HomeController(
                     accessTokenValue = token.accessToken.accessToken,
                     accessToken = objectMapper.writeValueAsString(token.accessToken),
                     state = (if (token.state == INVALID) "❌" else "✅") + " ${token.state}",
-                    createdTime = token.createdTime.atZone(ZoneId.systemDefault()),
-                    lastAccessedTime = token.lastAccessedTime?.atZone(ZoneId.systemDefault()),
+                    createdTime = OffsetDateTime.ofInstant(token.createdTime, ZoneId.systemDefault()),
+                    lastAccessedTime = if (token.lastAccessedTime == null)
+                        null else OffsetDateTime.ofInstant(token.lastAccessedTime, ZoneId.systemDefault()),
                     checkValidUrl = checkValidUrl,
                     refreshUrl = refreshUrl,
                     revokeUrl = revokeUrl
