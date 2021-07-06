@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import com.miro.miroappoauth.config.AppProperties
 import com.miro.miroappoauth.dto.AccessTokenDto
 import com.miro.miroappoauth.model.TokenRecord
+import com.miro.miroappoauth.model.TokenState.INVALID
 import com.miro.miroappoauth.services.TokenService
 import com.miro.miroappoauth.utils.getCurrentRequest
 import org.springframework.http.HttpHeaders
@@ -170,7 +171,7 @@ class HomeController(
                 TokenRecord(
                     accessTokenValue = sessionToken.accessToken.accessToken,
                     accessToken = objectMapper.writeValueAsString(sessionToken.accessToken),
-                    state = sessionToken.state,
+                    state = (if (sessionToken.state == INVALID) "❌" else "✅") + " ${sessionToken.state}",
                     createdTime = sessionToken.createdTime,
                     lastAccessedTime = sessionToken.lastAccessedTime,
                     checkValidUrl = checkValidUrl,

@@ -1,4 +1,6 @@
 
+Simple application (both backend and frontend) to test Miro OAuth 2.0 installation.
+
 # Steps to run the application
 - Register your application following [instruction](https://developers.miro.com/docs/getting-started)
   with default settings
