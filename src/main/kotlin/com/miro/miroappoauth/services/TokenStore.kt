@@ -17,11 +17,12 @@ class TokenStore(
     fun insert(token: Token) {
         jdbc.update(
             "INSERT INTO token(" +
-                "access_token, access_token_payload, user_id, team_id, " +
+                "access_token, access_token_payload, client_id, user_id, team_id, " +
                 "state, created_time, last_accessed_time) VALUES (" +
-                "?, ?, ?, ?, ?, ?, ?)",
+                "?, ?, ?, ?, ?, ?, ?, ?)",
             token.accessToken.accessToken,
             objectMapper.writeValueAsString(token.accessToken),
+            token.clientId,
             token.accessToken.userId,
             token.accessToken.teamId,
             token.state.name,
@@ -34,6 +35,7 @@ class TokenStore(
         jdbc.update(
             "UPDATE token SET " +
                 "access_token_payload = ?, " +
+                "client_id = ?, " +
                 "user_id = ?, " +
                 "team_id = ?, " +
                 "state = ?, " +
@@ -41,6 +43,7 @@ class TokenStore(
                 "last_accessed_time = ? " +
                 "WHERE access_token = ?",
             objectMapper.writeValueAsString(token.accessToken),
+            token.clientId,
             token.accessToken.userId,
             token.accessToken.teamId,
             token.state.name,
@@ -52,19 +55,19 @@ class TokenStore(
 
     fun get(accessToken: String): Token? {
         return jdbc.query(
-            "SELECT access_token, access_token_payload, state, created_time, last_accessed_time " +
+            "SELECT access_token, access_token_payload, client_id, state, created_time, last_accessed_time " +
                 "FROM token WHERE access_token = ?",
             mapToken(), accessToken
         ).firstOrNull()
     }
 
-    fun get(userId: Long, teamId: Long): Token? {
+    fun get(clientId: Long, userId: Long, teamId: Long): Token? {
         return jdbc.query(
-            "SELECT access_token, access_token_payload, state, created_time, last_accessed_time " +
+            "SELECT access_token, access_token_payload, client_id, state, created_time, last_accessed_time " +
                 "FROM token WHERE " +
-                "user_id = ? AND team_id = ? " +
+                "client_id = ? AND user_id = ? AND team_id = ? " +
                 "ORDER BY created_time DESC",
-            mapToken(), userId, teamId
+            mapToken(), clientId, userId, teamId
         ).firstOrNull()
     }
 
@@ -75,9 +78,11 @@ class TokenStore(
         )
         val state = TokenState.valueOf(rs.getString("state"))
         Token(
-            accessTokenPayload, state,
-            rs.getTimestamp("created_time").toInstant(),
-            rs.getTimestamp("last_accessed_time")?.toInstant()
+            accessToken = accessTokenPayload,
+            clientId = rs.getLong("client_id"),
+            state = state,
+            createdTime = rs.getTimestamp("created_time").toInstant(),
+            lastAccessedTime = rs.getTimestamp("last_accessed_time")?.toInstant()
         )
     }
 }

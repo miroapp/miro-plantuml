@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.client.HttpClientErrorException.Unauthorized
 import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
+import java.time.ZoneId
 import java.util.Collections
 import java.util.UUID
 import javax.servlet.http.HttpSession
@@ -60,7 +61,7 @@ class HomeController(
             .query(null)
             .toUriString()
 
-        val accessToken = tokenService.getAccessToken(code, redirectUri)
+        val accessToken = tokenService.getAccessToken(code, redirectUri, appProperties.clientId)
         storeToSession(session, accessToken)
 
         session.setAttribute(SESSION_ATTR_MESSAGE, "Application successfully installed")
@@ -150,30 +151,31 @@ class HomeController(
                 tokenService.getToken(accessToken)
             }
             .filterNotNull()
+            .filter { it.clientId == appProperties.clientId }
             .sortedByDescending { it.createdTime }
-            .map { sessionToken ->
+            .map { token ->
                 val checkValidUrl = UriComponentsBuilder.fromHttpRequest(request)
                     .replacePath(ENDPOINT_CHECK_VALID_TOKEN)
                     .query(null)
-                    .queryParam("access_token", sessionToken.accessToken.accessToken)
+                    .queryParam("access_token", token.accessToken.accessToken)
                     .build().toUri()
-                val refreshUrl = if (sessionToken.accessToken.refreshToken == null) null else
+                val refreshUrl = if (token.accessToken.refreshToken == null) null else
                     UriComponentsBuilder.fromHttpRequest(request)
                         .replacePath(ENDPOINT_REFRESH_TOKEN)
                         .query(null)
-                        .queryParam("access_token", sessionToken.accessToken.accessToken)
+                        .queryParam("access_token", token.accessToken.accessToken)
                         .build().toUri()
                 val revokeUrl = UriComponentsBuilder.fromHttpRequest(request)
                     .replacePath(ENDPOINT_REVOKE_TOKEN)
                     .query(null)
-                    .queryParam("access_token", sessionToken.accessToken.accessToken)
+                    .queryParam("access_token", token.accessToken.accessToken)
                     .build().toUri()
                 TokenRecord(
-                    accessTokenValue = sessionToken.accessToken.accessToken,
-                    accessToken = objectMapper.writeValueAsString(sessionToken.accessToken),
-                    state = (if (sessionToken.state == INVALID) "❌" else "✅") + " ${sessionToken.state}",
-                    createdTime = sessionToken.createdTime,
-                    lastAccessedTime = sessionToken.lastAccessedTime,
+                    accessTokenValue = token.accessToken.accessToken,
+                    accessToken = objectMapper.writeValueAsString(token.accessToken),
+                    state = (if (token.state == INVALID) "❌" else "✅") + " ${token.state}",
+                    createdTime = token.createdTime.atZone(ZoneId.systemDefault()),
+                    lastAccessedTime = token.lastAccessedTime?.atZone(ZoneId.systemDefault()),
                     checkValidUrl = checkValidUrl,
                     refreshUrl = refreshUrl,
                     revokeUrl = revokeUrl

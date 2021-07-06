@@ -8,6 +8,7 @@ import java.time.Instant
  */
 data class Token(
     val accessToken: AccessTokenDto,
+    val clientId: Long,
     var state: TokenState,
     val createdTime: Instant,
     var lastAccessedTime: Instant?

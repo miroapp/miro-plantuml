@@ -19,9 +19,9 @@ class TokenService(
     private val miroClient: MiroClient,
 ) {
 
-    fun getAccessToken(code: String, redirectUri: String): AccessTokenDto {
+    fun getAccessToken(code: String, redirectUri: String, clientId: Long): AccessTokenDto {
         val accessToken = miroClient.getAccessToken(code, redirectUri)
-        storeToken(accessToken)
+        storeToken(accessToken, clientId)
         return accessToken
     }
 
@@ -44,7 +44,7 @@ class TokenService(
                 throw IllegalStateException("refresh_token is null for $accessToken")
             }
             val refreshedToken = miroClient.refreshToken(accessToken.refreshToken)
-            storeToken(refreshedToken)
+            storeToken(refreshedToken, token.clientId)
             updateToken(accessToken.accessToken, INVALID)
             return refreshedToken
         } catch (e: Unauthorized) {
@@ -68,8 +68,11 @@ class TokenService(
         return tokenStore.get(accessToken)
     }
 
-    private fun storeToken(accessToken: AccessTokenDto) {
-        val token = Token(accessToken, NEW, Instant.now(), null)
+    private fun storeToken(accessToken: AccessTokenDto, clientId: Long) {
+        val token = Token(
+            accessToken = accessToken, clientId = clientId, state = NEW,
+            createdTime = Instant.now(), lastAccessedTime = null
+        )
         try {
             tokenStore.insert(token)
         } catch (e: DuplicateKeyException) {

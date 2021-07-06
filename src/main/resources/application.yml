@@ -27,7 +27,7 @@ spring.h2.console:
   enabled: true
   path: /h2-console
   settings:
-    web-allow-others: true
+    web-admin-password: password
 
 management.server:
   port: 8088
