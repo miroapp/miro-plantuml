@@ -143,7 +143,7 @@ class HomeController(
         model.addAttribute("webPlugin", webPlugin)
         model.addAttribute("authorizeUrl", getAuthorizeUrl(redirectUri, state = userId))
         model.addAttribute("installationManagementUrl", getInstallationManagementUrl(appProperties.teamId))
-        model.addAttribute("referer", referer)
+        model.addAttribute("referer", if (referer != servletRequest.requestURL.toString()) referer else null)
 
         val tokenRecords = Collections.list(session.attributeNames)
             .filter { it.startsWith(ATTR_ACCESS_TOKEN_PREFIX) }
