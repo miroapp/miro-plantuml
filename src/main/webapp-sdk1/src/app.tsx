@@ -116,14 +116,15 @@ function App() {
 
     return (
         <div className="container centered">
-            <button onClick={() => getBoardTitle()}>Get board title</button>
-            <br/>
             <div>Board title is: {boardState.title}</div>
             <br/>
-            <div>Authorized: {authState.authorized}</div>
-            <br/>
+            <button onClick={() => getBoardTitle()}>Get board title</button>
             <br/>
             <button onClick={() => deleteAllContent()}>Delete all content</button>
+            <br/>
+            <br/>
+            <br/>
+            <div>Authorized: {authState.authorized}</div>
             <br/>
             <button onClick={() => getClientId()}>getClientId</button>
             <br/>
