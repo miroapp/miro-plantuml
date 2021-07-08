@@ -50,12 +50,23 @@ function App() {
         redirectUrl.pathname = "/install"
 
         const token = await miro.authorize({
-            response_type: "code",
             state: "test-state",
             redirect_uri: redirectUrl.href
         })
         console.error(`Authorize token: "${token}"`)
-        alert(`Authorize token: "${token}"`)
+        alert(`You should not use this method!!! Authorize token: "${token}"`)
+    }
+
+    async function requestAuthorization() {
+        const redirectUrl = new URL(window.location.href)
+        redirectUrl.pathname = "/install"
+
+        await miro.requestAuthorization({
+            state: "test-state",
+            redirect_uri: redirectUrl.href
+        })
+        console.error(`Authorization requested`)
+        alert(`Authorization requested`)
     }
 
     async function callBackend() {
@@ -103,7 +114,9 @@ function App() {
             <br/>
             <button onClick={() => isAuthorized()}>isAuthorized</button>
             <br/>
-            <button onClick={() => authorize()}>authorize</button>
+            <button onClick={() => authorize()}><del>authorize</del></button>
+            <br/>
+            <button onClick={() => requestAuthorization()}>requestAuthorization</button>
             <br/>
             <button onClick={() => callBackend()}>call backend</button>
         </div>

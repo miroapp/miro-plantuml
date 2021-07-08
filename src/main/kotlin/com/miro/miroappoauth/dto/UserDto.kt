@@ -8,7 +8,7 @@ data class UserDto(
     val id: Long,
     val name: String,
     val createdAt: Instant,
-    val role: String,
+    val role: String?,
     val email: String,
     // "registered", todo enum?
     val state: String

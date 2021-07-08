@@ -65,7 +65,7 @@ class HomeController(
         val accessToken = tokenService.getAccessToken(code, redirectUri, appProperties.clientId)
         storeToSession(session, accessToken)
 
-        session.setAttribute(SESSION_ATTR_MESSAGE, "Application successfully installed")
+        session.setAttribute(SESSION_ATTR_MESSAGE, "Application successfully authorized")
         return "redirect:/#access_tokens"
     }
 
