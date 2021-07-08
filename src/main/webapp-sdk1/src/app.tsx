@@ -5,11 +5,22 @@ import axios, {AxiosResponse} from 'axios'
 import './styles.css'
 
 function App() {
-    const [state, setState] = React.useState({boardTitle: ''})
+    const [state, setState] = React.useState({
+        boardTitle: '',
+        authorized: ''
+    })
+
+    async function updateState(newTitle: string) {
+        let authorized = await miro.isAuthorized() ? "✅" : "❌"
+        setState({
+            boardTitle: newTitle,
+            authorized: authorized
+        })
+    }
 
     async function getBoardTitle() {
         const boardInfo = await miro.board.info.get()
-        setState({boardTitle: boardInfo.title})
+        await updateState(boardInfo.title)
     }
 
     async function deleteAllContent() {
@@ -29,18 +40,21 @@ function App() {
 
     async function getToken() {
         const token = await miro.getToken()
+        await updateState('')
         console.error(`You should not use this method!!! Token is "${token}"`)
         alert(`You should not use this method!!! Token is "${token}"`)
     }
 
     async function getIdToken() {
         const token = await miro.getIdToken()
+        await updateState('')
         console.error(`Id token is "${token}"`)
         alert(`Id token is ${token}`)
     }
 
     async function isAuthorized() {
         const isAuthorized = await miro.isAuthorized()
+        await updateState('')
         console.error(`Is authorized: "${isAuthorized}"`)
         alert(`Is authorized ${isAuthorized}`)
     }
@@ -53,6 +67,7 @@ function App() {
             state: "test-state",
             redirect_uri: redirectUrl.href
         })
+        await updateState('')
         console.error(`Authorize token: "${token}"`)
         alert(`You should not use this method!!! Authorize token: "${token}"`)
     }
@@ -65,6 +80,7 @@ function App() {
             state: "test-state",
             redirect_uri: redirectUrl.href
         })
+        await updateState('')
         console.error(`Authorization requested`)
         alert(`Authorization requested`)
     }
@@ -74,6 +90,7 @@ function App() {
         backendUrl.pathname = "/call"
 
         const token = await miro.getIdToken()
+        await updateState('')
         axios.get(backendUrl.href,
             {
                 headers: {
@@ -102,6 +119,8 @@ function App() {
             <button onClick={() => getBoardTitle()}>Get board title</button>
             <br/>
             <div>Board title is: {state.boardTitle}</div>
+            <br/>
+            <div>Authorized: {state.authorized}</div>
             <br/>
             <br/>
             <button onClick={() => deleteAllContent()}>Delete all content</button>
