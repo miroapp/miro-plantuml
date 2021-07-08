@@ -68,6 +68,10 @@ class TokenService(
         return tokenStore.get(accessToken)
     }
 
+    fun getToken(clientId: Long, userId: Long, teamId: Long): Token? {
+        return tokenStore.get(clientId, userId, teamId)
+    }
+
     private fun storeToken(accessToken: AccessTokenDto, clientId: Long) {
         val token = Token(
             accessToken = accessToken, clientId = clientId, state = NEW,

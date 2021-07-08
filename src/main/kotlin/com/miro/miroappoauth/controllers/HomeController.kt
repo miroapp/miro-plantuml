@@ -158,21 +158,21 @@ class HomeController(
                 val checkValidUrl = UriComponentsBuilder.fromHttpRequest(request)
                     .replacePath(ENDPOINT_CHECK_VALID_TOKEN)
                     .query(null)
-                    .queryParam("access_token", token.accessToken.accessToken)
+                    .queryParam("access_token", token.accessTokenValue())
                     .build().toUri()
                 val refreshUrl = if (token.accessToken.refreshToken == null) null else
                     UriComponentsBuilder.fromHttpRequest(request)
                         .replacePath(ENDPOINT_REFRESH_TOKEN)
                         .query(null)
-                        .queryParam("access_token", token.accessToken.accessToken)
+                        .queryParam("access_token", token.accessTokenValue())
                         .build().toUri()
                 val revokeUrl = UriComponentsBuilder.fromHttpRequest(request)
                     .replacePath(ENDPOINT_REVOKE_TOKEN)
                     .query(null)
-                    .queryParam("access_token", token.accessToken.accessToken)
+                    .queryParam("access_token", token.accessTokenValue())
                     .build().toUri()
                 TokenRecord(
-                    accessTokenValue = token.accessToken.accessToken,
+                    accessTokenValue = token.accessTokenValue(),
                     accessToken = objectMapper.writeValueAsString(token.accessToken),
                     state = (if (token.state == INVALID) "❌" else "✅") + " ${token.state}",
                     createdTime = OffsetDateTime.ofInstant(token.createdTime, ZoneId.systemDefault()),

@@ -7,16 +7,17 @@ import com.miro.miroappoauth.client.MiroClient
 import com.miro.miroappoauth.config.AppProperties
 import com.miro.miroappoauth.dto.UserDto
 import com.miro.miroappoauth.exceptions.UnauthorizedException
-import com.miro.miroappoauth.services.TokenStore
+import com.miro.miroappoauth.services.TokenService
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.client.HttpClientErrorException.Unauthorized
 
 @RestController
 class CallRestController(
     private val appProperties: AppProperties,
-    private val tokenStore: TokenStore,
+    private val tokenService: TokenService,
     private val miroClient: MiroClient
 ) {
 
@@ -44,13 +45,22 @@ class CallRestController(
         val clientId = jwt.getClaim("sub").asString()
         val userId = jwt.getClaim("user").asString()
         val teamId = jwt.getClaim("team").asString()
-        val token = tokenStore.get(
+        val token = tokenService.getToken(
             clientId = clientId.toLong(),
             userId = userId.toLong(),
             teamId = teamId.toLong()
         ) ?: throw UnauthorizedException(
             "Token not found for clientId=$clientId, userId=$userId, teamId=$teamId"
         )
-        return miroClient.getSelfUser(token.accessToken.accessToken)
+
+        return try {
+            miroClient.getSelfUser(token.accessTokenValue())
+        } catch (e: Unauthorized) {
+            if (token.accessToken.refreshToken == null) {
+                throw e
+            }
+            val newAccessToken = tokenService.refreshToken(token.accessTokenValue())
+            miroClient.getSelfUser(newAccessToken.accessToken)
+        }
     }
 }

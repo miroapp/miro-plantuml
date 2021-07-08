@@ -20,7 +20,7 @@ class TokenStore(
                 "access_token, access_token_payload, client_id, user_id, team_id, " +
                 "state, created_time, last_accessed_time) VALUES (" +
                 "?, ?, ?, ?, ?, ?, ?, ?)",
-            token.accessToken.accessToken,
+            token.accessTokenValue(),
             objectMapper.writeValueAsString(token.accessToken),
             token.clientId,
             token.accessToken.userId,
@@ -49,7 +49,7 @@ class TokenStore(
             token.state.name,
             token.createdTime,
             token.lastAccessedTime,
-            token.accessToken.accessToken
+            token.accessTokenValue()
         )
     }
 

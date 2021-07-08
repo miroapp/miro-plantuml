@@ -12,7 +12,9 @@ data class Token(
     var state: TokenState,
     val createdTime: Instant,
     var lastAccessedTime: Instant?
-)
+) {
+    fun accessTokenValue() = accessToken.accessToken
+}
 
 enum class TokenState {
     NEW,
