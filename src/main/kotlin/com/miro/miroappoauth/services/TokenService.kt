@@ -36,7 +36,7 @@ class TokenService(
     }
 
     fun refreshToken(accessTokenValue: String): AccessTokenDto {
-        val token = tokenStore.get(accessTokenValue)
+        val token = tokenStore.getToken(accessTokenValue)
             ?: throw IllegalStateException("Missing accessToken $accessTokenValue")
         val accessToken = token.accessToken
         try {
@@ -64,12 +64,12 @@ class TokenService(
         }
     }
 
-    fun getToken(accessToken: String): Token? {
-        return tokenStore.get(accessToken)
+    fun getToken(userId: Long, clientId: Long, teamId: Long): Token? {
+        return tokenStore.getToken(userId, clientId, teamId)
     }
 
-    fun getToken(clientId: Long, userId: Long, teamId: Long): Token? {
-        return tokenStore.get(clientId, userId, teamId)
+    fun getTokens(userId: Long, clientId: Long): List<Token> {
+        return tokenStore.getTokens(userId, clientId)
     }
 
     private fun storeToken(accessToken: AccessTokenDto, clientId: Long) {
@@ -85,7 +85,7 @@ class TokenService(
     }
 
     private fun updateToken(accessToken: String, state: TokenState) {
-        val token = tokenStore.get(accessToken) ?: throw IllegalStateException("Missing token $accessToken")
+        val token = tokenStore.getToken(accessToken) ?: throw IllegalStateException("Missing token $accessToken")
         token.state = state
         token.lastAccessedTime = Instant.now()
         tokenStore.update(token)

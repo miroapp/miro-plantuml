@@ -39,7 +39,7 @@
                         <td th:text="${sessionId}"></td>
                     </tr>
                     <tr>
-                        <td>User ID (stored in session)</td>
+                        <td>Miro User ID (last authorized)</td>
                         <td th:text="${userId}"></td>
                     </tr>
                     <tr>
@@ -94,8 +94,8 @@
     </h5>
 
     <h2 class="my-2">Access tokens</h2>
-    Note, that here you see only tokens that are associated with current session (based on Cookies),
-    auto-refreshed tokens are not here. To see all tokens you can open h2-console.
+    Note, that here you see only tokens that are associated with current userId (stored in session).
+    To see all tokens you can open h2-console.
 
     <div class="row">
         <div class="col-md-3">

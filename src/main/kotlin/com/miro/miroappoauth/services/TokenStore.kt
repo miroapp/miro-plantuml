@@ -53,7 +53,7 @@ class TokenStore(
         )
     }
 
-    fun get(accessToken: String): Token? {
+    fun getToken(accessToken: String): Token? {
         return jdbc.query(
             "SELECT access_token, access_token_payload, client_id, state, created_time, last_accessed_time " +
                 "FROM token WHERE access_token = ?",
@@ -61,14 +61,24 @@ class TokenStore(
         ).firstOrNull()
     }
 
-    fun get(clientId: Long, userId: Long, teamId: Long): Token? {
+    fun getToken(userId: Long, clientId: Long, teamId: Long): Token? {
         return jdbc.query(
             "SELECT access_token, access_token_payload, client_id, state, created_time, last_accessed_time " +
                 "FROM token WHERE " +
-                "client_id = ? AND user_id = ? AND team_id = ? " +
+                "user_id = ? AND client_id = ? AND team_id = ? " +
                 "ORDER BY created_time DESC",
-            mapToken(), clientId, userId, teamId
+            mapToken(), userId, clientId, teamId
         ).firstOrNull()
+    }
+
+    fun getTokens(userId: Long, clientId: Long): List<Token> {
+        return jdbc.query(
+            "SELECT access_token, access_token_payload, client_id, state, created_time, last_accessed_time " +
+                "FROM token WHERE " +
+                "user_id = ? AND client_id = ? " +
+                "ORDER BY created_time DESC",
+            mapToken(), userId, clientId
+        )
     }
 
     private fun mapToken() = { rs: ResultSet, _: Int ->

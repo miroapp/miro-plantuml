@@ -2,7 +2,6 @@ package com.miro.miroappoauth.controllers
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.miro.miroappoauth.config.AppProperties
-import com.miro.miroappoauth.dto.AccessTokenDto
 import com.miro.miroappoauth.model.TokenRecord
 import com.miro.miroappoauth.model.TokenState.INVALID
 import com.miro.miroappoauth.services.TokenService
@@ -18,8 +17,7 @@ import org.springframework.web.util.UriComponentsBuilder
 import java.net.URI
 import java.time.OffsetDateTime
 import java.time.ZoneId
-import java.util.Collections
-import java.util.UUID
+import java.util.Collections.emptyList
 import javax.servlet.http.HttpSession
 
 @Controller
@@ -63,7 +61,7 @@ class HomeController(
             .toUriString()
 
         val accessToken = tokenService.getAccessToken(code, redirectUri, appProperties.clientId)
-        storeToSession(session, accessToken)
+        session.setAttribute(SESSION_ATTR_USER_ID, accessToken.userId)
 
         session.setAttribute(SESSION_ATTR_MESSAGE, "Application successfully authorized")
         return "redirect:/#access_tokens"
@@ -89,9 +87,8 @@ class HomeController(
         @RequestParam("access_token") accessToken: String
     ): String {
         try {
-            val token = tokenService.refreshToken(accessToken)
+            tokenService.refreshToken(accessToken)
             session.setAttribute(SESSION_ATTR_MESSAGE, "Successfully refreshed")
-            storeToSession(session, token)
         } catch (ignore: Unauthorized) {
             session.setAttribute(SESSION_ATTR_MESSAGE, "Failed to refresh token")
         }
@@ -112,11 +109,6 @@ class HomeController(
         return "redirect:/#access_tokens"
     }
 
-    private fun storeToSession(session: HttpSession, accessTokenDto: AccessTokenDto) {
-        val attrName = "$ATTR_ACCESS_TOKEN_PREFIX${accessTokenDto.accessToken}"
-        session.setAttribute(attrName, "")
-    }
-
     private fun initModelAttributes(session: HttpSession, model: Model) {
         val servletRequest = getCurrentRequest()
         val request = ServletServerHttpRequest(servletRequest)
@@ -133,7 +125,7 @@ class HomeController(
             .build().toUri()
 
         val referer = servletRequest.getHeader(HttpHeaders.REFERER)
-        val userId = getUserId(session)
+        val userId = session.getAttribute(SESSION_ATTR_USER_ID) as Long?
 
         model.addAttribute("sessionId", session.id)
         model.addAttribute("userId", userId)
@@ -141,19 +133,16 @@ class HomeController(
         model.addAttribute("clientId", appProperties.clientId)
         model.addAttribute("redirectUri", redirectUri)
         model.addAttribute("webPlugin", webPlugin)
-        model.addAttribute("authorizeUrl", getAuthorizeUrl(redirectUri, state = userId))
+        model.addAttribute("authorizeUrl", getAuthorizeUrl(redirectUri))
         model.addAttribute("installationManagementUrl", getInstallationManagementUrl(appProperties.teamId))
         model.addAttribute("referer", if (referer != servletRequest.requestURL.toString()) referer else null)
 
-        val tokenRecords = Collections.list(session.attributeNames)
-            .filter { it.startsWith(ATTR_ACCESS_TOKEN_PREFIX) }
-            .map {
-                val accessToken = it.substring(ATTR_ACCESS_TOKEN_PREFIX.length)
-                tokenService.getToken(accessToken)
-            }
-            .filterNotNull()
-            .filter { it.clientId == appProperties.clientId }
-            .sortedByDescending { it.createdTime }
+        val tokenRecords = if (userId == null) emptyList() else getTokenRecords(userId, request)
+        model.addAttribute("tokenRecords", tokenRecords)
+    }
+
+    private fun getTokenRecords(userId: Long, request: ServletServerHttpRequest): List<TokenRecord> {
+        return tokenService.getTokens(userId, appProperties.clientId)
             .map { token ->
                 val checkValidUrl = UriComponentsBuilder.fromHttpRequest(request)
                     .replacePath(ENDPOINT_CHECK_VALID_TOKEN)
@@ -183,7 +172,6 @@ class HomeController(
                     revokeUrl = revokeUrl
                 )
             }
-        model.addAttribute("tokenRecords", tokenRecords)
     }
 
     private fun getInstallationManagementUrl(teamId: Long?): String? {
@@ -196,13 +184,13 @@ class HomeController(
             .toUriString()
     }
 
-    private fun getAuthorizeUrl(redirectUri: URI, state: String): String {
+    private fun getAuthorizeUrl(redirectUri: URI/*, state: String*/): String {
         return UriComponentsBuilder.fromHttpUrl(appProperties.miroBaseUrl)
             .path("/oauth/authorize")
             .queryParam("response_type", "code")
             .queryParam("client_id", appProperties.clientId)
             .queryParam("redirect_uri", redirectUri)
-            .queryParam("state", state)
+            // .queryParam("state", state)
             .apply {
                 if (appProperties.teamId != null) {
                     queryParam("team_id", appProperties.teamId)
@@ -214,20 +202,9 @@ class HomeController(
     }
 }
 
-fun getUserId(session: HttpSession): String {
-    var userId = session.getAttribute(SESSION_ATTR_USER_ID) as String?
-    if (userId == null) {
-        userId = UUID.randomUUID().toString()
-        session.setAttribute(SESSION_ATTR_USER_ID, userId)
-    }
-    return userId
-}
-
-const val SESSION_ATTR_USER_ID = "user_id"
+const val SESSION_ATTR_USER_ID = "miro_user_id"
 
 const val SESSION_ATTR_MESSAGE = "message"
-
-const val ATTR_ACCESS_TOKEN_PREFIX = "accessToken-"
 
 const val ENDPOINT_CHECK_VALID_TOKEN = "/check-valid-token"
 const val ENDPOINT_REFRESH_TOKEN = "/refresh-token"

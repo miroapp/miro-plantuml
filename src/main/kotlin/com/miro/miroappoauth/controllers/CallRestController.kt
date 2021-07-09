@@ -32,9 +32,18 @@ class CallRestController(
             .map { it.key to it.value.asString() }
             .toMap()
         log.info("Got request $claims")
+
+        val userId = jwt.getClaim("user").asString()
+        val clientId = jwt.getClaim("sub").asString()
+        val teamId = jwt.getClaim("team").asString()
+
+        if (appProperties.clientId.toString() != clientId) {
+            throw UnauthorizedException("Wrong clientId, check backend configuration")
+        }
+
         try {
             JWT.require(Algorithm.HMAC256(appProperties.clientSecret))
-                // to avoid clock minor unsync issues
+                // to avoid clock non-sync issues
                 .acceptLeeway(180)
                 .build()
                 .verify(jwt)
@@ -42,15 +51,12 @@ class CallRestController(
             throw UnauthorizedException("Wrong JWT signature: $e")
         }
 
-        val clientId = jwt.getClaim("sub").asString()
-        val userId = jwt.getClaim("user").asString()
-        val teamId = jwt.getClaim("team").asString()
         val token = tokenService.getToken(
-            clientId = clientId.toLong(),
             userId = userId.toLong(),
+            clientId = clientId.toLong(),
             teamId = teamId.toLong()
         ) ?: throw UnauthorizedException(
-            "Token not found for clientId=$clientId, userId=$userId, teamId=$teamId"
+            "Token not found for userId=$userId, teamId=$teamId, clientId=$clientId"
         )
 
         return try {
