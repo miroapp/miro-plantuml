@@ -30,12 +30,18 @@ function App() {
             return
         }
         await miro.board.widgets.deleteById(allObjects.map((object) => object.id))
-        await miro.showNotification('Content has been deleted')
+        await miro.showNotification('Content has been deleted (you can undo this action)')
     }
 
-    function getClientId() {
+    async function getScopes() {
+        const scopes = await miro.currentUser.getScopes()
+        console.error(`Scopes: ${scopes}`)
+        await miro.showNotification(`Scopes: ${scopes}`)
+    }
+
+    async function getClientId() {
         const clientId = miro.getClientId()
-        alert(`Client id : ${clientId}`)
+        await miro.showNotification(`Client id : ${clientId}`)
     }
 
     async function getToken() {
@@ -49,14 +55,14 @@ function App() {
         const token = await miro.getIdToken()
         await updateAuthState()
         console.error(`Id token is "${token}"`)
-        alert(`Id token is ${token}`)
+        await miro.showNotification(`Id token is ${token}`)
     }
 
     async function isAuthorized() {
         const isAuthorized = await miro.isAuthorized()
         await updateAuthState()
         console.error(`Is authorized: "${isAuthorized}"`)
-        alert(`Is authorized ${isAuthorized}`)
+        await miro.showNotification(`Is authorized ${isAuthorized}`)
     }
 
     async function authorize() {
@@ -82,7 +88,6 @@ function App() {
         })
         await updateAuthState()
         console.error(`Authorization requested`)
-        alert(`Authorization requested`)
     }
 
     async function callBackend() {
@@ -99,7 +104,7 @@ function App() {
             })
             .then((response: AxiosResponse) => {
                 console.error(`callBackend: "${response.data}"`)
-                alert(`callBackend: user name="${response.data.name}"`)
+                miro.showNotification(`callBackend: user name="${response.data.name}"`)
             })
             .catch((error) => {
                 let message = error.message
@@ -121,6 +126,8 @@ function App() {
             <button onClick={() => getBoardTitle()}>Get board title</button>
             <br/>
             <button onClick={() => deleteAllContent()}>Delete all content</button>
+            <br/>
+            <button onClick={() => getScopes()}>getScopes</button>
             <br/>
             <br/>
             <br/>
