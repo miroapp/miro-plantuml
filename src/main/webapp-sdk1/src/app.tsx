@@ -13,6 +13,10 @@ function App() {
         authorized: ''
     })
 
+    function resetAuthState() {
+        setAuthState({authorized: ""})
+    }
+
     async function updateAuthState() {
         let authorized = await miro.isAuthorized()
         setAuthState({authorized: authorized ? "✅" : "❌"})
@@ -95,7 +99,7 @@ function App() {
         backendUrl.pathname = "/call"
 
         const token = await miro.getIdToken()
-        await updateAuthState()
+        resetAuthState()
         axios.get(backendUrl.href,
             {
                 headers: {
