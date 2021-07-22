@@ -6,6 +6,9 @@ import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.GetMapping
 import java.util.Collections
 
+/**
+ * Helper controller to list HTTP headers of the request.
+ */
 @Controller
 class HeadersController {
 

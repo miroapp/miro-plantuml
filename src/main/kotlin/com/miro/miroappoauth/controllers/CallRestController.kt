@@ -62,6 +62,7 @@ class CallRestController(
         return try {
             miroClient.getSelfUser(token.accessTokenValue())
         } catch (e: Unauthorized) {
+            // todo refreshToken interceptor
             if (token.accessToken.refreshToken == null) {
                 throw e
             }

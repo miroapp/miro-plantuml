@@ -20,6 +20,9 @@ import java.time.ZoneId
 import java.util.Collections.emptyList
 import javax.servlet.http.HttpSession
 
+/**
+ * Main page with listing tokens and installation.
+ */
 @Controller
 class HomeController(
     private val appProperties: AppProperties,
@@ -41,32 +44,7 @@ class HomeController(
         return "index"
     }
 
-    @GetMapping(ENDPOINT_INSTALL)
-    fun install(
-        session: HttpSession,
-        @RequestParam("code") code: String,
-        @RequestParam(name = "state", required = false) state: String?
-    ): String {
-//        val userId = getUserId(session)
-//        // todo state signed by JWT
-//        if (state != null && state != userId) {
-//            throw IllegalArgumentException("Unexpected state $state, should be $userId")
-//        }
-
-        // resolve redirectUri value by current request URL, but omit query parameters
-        val servletRequest = getCurrentRequest()
-        val request = ServletServerHttpRequest(servletRequest)
-        val redirectUri = UriComponentsBuilder.fromHttpRequest(request)
-            .query(null)
-            .toUriString()
-
-        val accessToken = tokenService.getAccessToken(code, redirectUri, appProperties.clientId)
-        session.setAttribute(SESSION_ATTR_USER_ID, accessToken.userId)
-
-        session.setAttribute(SESSION_ATTR_MESSAGE, "Application successfully authorized")
-        return "redirect:/#access_tokens"
-    }
-
+    // todo AJAX action
     @GetMapping(ENDPOINT_CHECK_VALID_TOKEN)
     fun checkValidToken(
         session: HttpSession,
@@ -81,6 +59,7 @@ class HomeController(
         return "redirect:/#access_tokens"
     }
 
+    // todo AJAX action
     @GetMapping(ENDPOINT_REFRESH_TOKEN)
     fun refreshToken(
         session: HttpSession,
@@ -95,6 +74,7 @@ class HomeController(
         return "redirect:/#access_tokens"
     }
 
+    // todo AJAX action
     @GetMapping(ENDPOINT_REVOKE_TOKEN)
     fun revokeToken(
         session: HttpSession,
