@@ -94,9 +94,9 @@ function App() {
         console.error(`Authorization requested`)
     }
 
-    async function callBackend() {
+    async function getSelfUser() {
         const backendUrl = new URL(window.location.href)
-        backendUrl.pathname = "/call"
+        backendUrl.pathname = "/get-self-user"
 
         const token = await miro.getIdToken()
         resetAuthState()
@@ -149,7 +149,7 @@ function App() {
             <br/>
             <button onClick={() => requestAuthorization()}>requestAuthorization</button>
             <br/>
-            <button onClick={() => callBackend()}>call backend</button>
+            <button onClick={() => getSelfUser()}>call backend: getSelfUser</button>
         </div>
     )
 }

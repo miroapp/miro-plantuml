@@ -10,7 +10,7 @@ server:
   port: 3333
   forward-headers-strategy: FRAMEWORK
 server.servlet:
-  session.timeout: 48h
+  session.timeout: 168h
 
 spring.jackson:
   serialization:
