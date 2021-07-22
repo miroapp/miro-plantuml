@@ -123,6 +123,37 @@ function App() {
             });
     }
 
+    async function createBoard() {
+        const backendUrl = new URL(window.location.href)
+        backendUrl.pathname = "/create-board"
+
+        const token = await miro.getIdToken()
+        resetAuthState()
+        axios.post(backendUrl.href,
+            {
+            },
+            {
+                headers: {
+                    "X-Miro-Token": token
+                }
+            })
+            .then((response: AxiosResponse) => {
+                console.error(`createBoard: "${response.data.viewLink}"`)
+                miro.showNotification("New board created")
+            })
+            .catch((error) => {
+                let message = error.message
+                if (error.response) {
+                    message = JSON.stringify(error.response.data)
+                } else if (error.request) {
+                    message = "request: " + error.request
+                }
+
+                console.error(`createBoard error: "${message}"`)
+                alert(`createBoard: error "${message}"`)
+            });
+    }
+
     return (
         <div className="container centered">
             <div>Board title is: {boardState.title}</div>
@@ -134,22 +165,24 @@ function App() {
             <button onClick={() => getScopes()}>getScopes</button>
             <br/>
             <br/>
-            <br/>
             <div>Authorized: {authState.authorized}</div>
             <br/>
             <button onClick={() => getClientId()}>getClientId</button>
-            <br/>
-            <button onClick={() => getToken()}><del>getToken</del></button>
+            {/*<br/>*/}
+            {/*<button onClick={() => getToken()}><del>getToken</del></button>*/}
             <br/>
             <button onClick={() => getIdToken()}>getIdToken</button>
             <br/>
             <button onClick={() => isAuthorized()}>isAuthorized</button>
-            <br/>
-            <button onClick={() => authorize()}><del>authorize</del></button>
+            {/*<br/>*/}
+            {/*<button onClick={() => authorize()}><del>authorize</del></button>*/}
             <br/>
             <button onClick={() => requestAuthorization()}>requestAuthorization</button>
             <br/>
+            <br/>
             <button onClick={() => getSelfUser()}>call backend: getSelfUser</button>
+            <br/>
+            <button onClick={() => createBoard()}>call backend: createBoard</button>
         </div>
     )
 }

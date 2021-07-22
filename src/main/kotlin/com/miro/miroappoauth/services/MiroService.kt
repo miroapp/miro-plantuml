@@ -5,6 +5,9 @@ import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.exceptions.JWTVerificationException
 import com.miro.miroappoauth.client.MiroClient
 import com.miro.miroappoauth.config.AppProperties
+import com.miro.miroappoauth.dto.AccessType
+import com.miro.miroappoauth.dto.BoardDto
+import com.miro.miroappoauth.dto.TeamAccessType
 import com.miro.miroappoauth.dto.UserDto
 import com.miro.miroappoauth.exceptions.UnauthorizedException
 import com.miro.miroappoauth.model.Token
@@ -59,6 +62,17 @@ class MiroService(
 
     fun getSelfUser(token: Token): UserDto {
         return doRequest(token) { accessToken -> miroClient.getSelfUser(accessToken) }
+    }
+
+    fun createBoard(
+        token: Token,
+        name: String,
+        accessType: AccessType,
+        teamAccessType: TeamAccessType
+    ): BoardDto {
+        return doRequest(token) { accessToken ->
+            miroClient.createBoard(accessToken, name, accessType, teamAccessType)
+        }
     }
 
     /**
