@@ -8,6 +8,8 @@ import com.miro.miroappoauth.config.AppProperties
 import com.miro.miroappoauth.dto.UserDto
 import com.miro.miroappoauth.exceptions.UnauthorizedException
 import com.miro.miroappoauth.model.Token
+import com.miro.miroappoauth.model.TokenState.INVALID
+import com.miro.miroappoauth.model.TokenState.VALID
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
 import org.springframework.web.client.HttpClientErrorException.Unauthorized
@@ -56,15 +58,24 @@ class MiroService(
     }
 
     fun getSelfUser(token: Token): UserDto {
+        return doRequest(token) { accessToken -> miroClient.getSelfUser(accessToken) }
+    }
+
+    /**
+     * Do an HTTP request re-authorizing (via refresh_token) if current access token has expired.
+     */
+    private fun <T> doRequest(token: Token, caller: (accessToken: String) -> T): T {
         return try {
-            miroClient.getSelfUser(token.accessTokenValue())
+            val result = caller(token.accessTokenValue())
+            tokenService.updateToken(token.accessTokenValue(), VALID)
+            result
         } catch (e: Unauthorized) {
-            // todo refreshToken interceptor
+            tokenService.updateToken(token.accessTokenValue(), INVALID)
             if (token.accessToken.refreshToken == null) {
                 throw e
             }
             val newAccessToken = tokenService.refreshToken(token.accessTokenValue())
-            miroClient.getSelfUser(newAccessToken.accessToken)
+            caller(newAccessToken.accessToken)
         }
     }
 }

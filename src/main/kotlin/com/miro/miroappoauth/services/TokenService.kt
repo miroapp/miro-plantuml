@@ -74,6 +74,13 @@ class TokenService(
         return tokenStore.getTokens(userId, clientId)
     }
 
+    fun updateToken(accessToken: String, state: TokenState) {
+        val token = tokenStore.getToken(accessToken) ?: throw IllegalStateException("Missing token $accessToken")
+        token.state = state
+        token.lastAccessedTime = Instant.now()
+        tokenStore.update(token)
+    }
+
     private fun storeToken(accessToken: AccessTokenDto, clientId: Long) {
         val token = Token(
             accessToken = accessToken, clientId = clientId, state = NEW,
@@ -84,12 +91,5 @@ class TokenService(
         } catch (e: DuplicateKeyException) {
             tokenStore.update(token)
         }
-    }
-
-    private fun updateToken(accessToken: String, state: TokenState) {
-        val token = tokenStore.getToken(accessToken) ?: throw IllegalStateException("Missing token $accessToken")
-        token.state = state
-        token.lastAccessedTime = Instant.now()
-        tokenStore.update(token)
     }
 }
