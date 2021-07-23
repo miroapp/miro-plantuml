@@ -11,6 +11,7 @@ server:
   forward-headers-strategy: FRAMEWORK
 server.servlet:
   session.timeout: 168h
+  session.persistent: true
 
 spring.jackson:
   serialization:
