@@ -16,6 +16,7 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -143,14 +144,9 @@ public class LoggingInterceptor implements ClientHttpRequestInterceptor {
     }
 
     private static Charset getContentTypeCharset(HttpHeaders headers) {
-        MediaType contentType = headers.getContentType();
-        if (contentType != null) {
-            Charset charset = contentType.getCharset();
-            if (charset != null) {
-                return charset;
-            }
-        }
-        return UTF_8;
+        return Optional.ofNullable(headers.getContentType())
+                .map(MediaType::getCharset)
+                .orElse(UTF_8);
     }
 
     private static class PrintStringWriter extends PrintWriter {
