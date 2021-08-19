@@ -16,7 +16,7 @@ import org.springframework.web.client.RestTemplate
  * See [Miro REST API](https://developers.miro.com/reference).
  * Note: we use camelCase for json parsing here.
  */
-class MiroClient(
+class MiroPublicClient(
     private val rest: RestTemplate
 ) {
     fun getSelfUser(accessToken: String): UserDto {

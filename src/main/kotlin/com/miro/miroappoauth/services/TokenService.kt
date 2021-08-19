@@ -1,7 +1,8 @@
 package com.miro.miroappoauth.services
 
 import com.miro.miroappoauth.client.MiroAuthClient
-import com.miro.miroappoauth.client.MiroClient
+import com.miro.miroappoauth.client.MiroPublicClient
+import com.miro.miroappoauth.config.AppProperties
 import com.miro.miroappoauth.dto.AccessTokenDto
 import com.miro.miroappoauth.dto.UserDto
 import com.miro.miroappoauth.model.Token
@@ -16,13 +17,14 @@ import java.time.Instant
 
 @Service
 class TokenService(
+    private val appProperties: AppProperties,
     private val tokenStore: TokenStore,
     private val miroAuthClient: MiroAuthClient,
-    private val miroClient: MiroClient
+    private val miroPublicClient: MiroPublicClient
 ) {
 
     fun getAccessToken(code: String, redirectUri: String, clientId: Long): AccessTokenDto {
-        val accessToken = miroAuthClient.getAccessToken(code, redirectUri)
+        val accessToken = miroAuthClient.getAccessToken(code, redirectUri, appProperties.clientId, appProperties.clientSecret)
         storeToken(accessToken, clientId)
         return accessToken
     }
@@ -45,7 +47,7 @@ class TokenService(
             if (accessToken.refreshToken == null) {
                 throw IllegalStateException("refresh_token is null for $accessToken")
             }
-            val refreshedToken = miroAuthClient.refreshToken(accessToken.refreshToken)
+            val refreshedToken = miroAuthClient.refreshToken(accessToken.refreshToken, appProperties.clientId, appProperties.clientSecret)
             storeToken(refreshedToken, token.clientId)
             updateToken(accessToken.accessToken, INVALID)
             return refreshedToken
@@ -57,7 +59,7 @@ class TokenService(
 
     fun getSelfUser(accessToken: String): UserDto {
         try {
-            val self = miroClient.getSelfUser(accessToken)
+            val self = miroPublicClient.getSelfUser(accessToken)
             updateToken(accessToken, VALID)
             return self
         } catch (e: Unauthorized) {
