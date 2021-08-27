@@ -27,7 +27,7 @@ t=2021-06-07T12:52:44+0300 lvl=info msg="started tunnel" obj=tunnels name=comman
 ```
 Pay attention, that now your local single port 3333 becomes public in the internet (while ngrok is working) 
 without any IP or auth restriction.
-* Open the link (e.g. https://9744fbc871a8.ngrok.io), and you'll see the app welcome page
+* Open the link (e.g. https://9744fbc871a8.ngrok.io or https://localhost:3333/), and you'll see the app welcome page
 * Copy "App URL" value to your app settings page
 * Add "Redirect URI for OAuth2.0" value to your app settings page
 * TODO set up Permissions
