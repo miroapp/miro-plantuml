@@ -20,6 +20,7 @@ function App() {
     async function updateAuthState() {
         let authorized = await miro.isAuthorized()
         setAuthState({authorized: authorized ? "✅" : "❌"})
+        return authorized
     }
 
     async function getBoardTitle() {
@@ -48,12 +49,12 @@ function App() {
         await miro.showNotification(`Client id : ${clientId}`)
     }
 
-    async function getToken() {
-        const token = await miro.getToken()
-        await updateAuthState()
-        console.error(`You should not use this method!!! Token is "${token}"`)
-        alert(`You should not use this method!!! Token is "${token}"`)
-    }
+    // async function getToken() {
+    //     const token = await miro.getToken()
+    //     await updateAuthState()
+    //     console.error(`You should not use this method!!! Token is "${token}"`)
+    //     alert(`You should not use this method!!! Token is "${token}"`)
+    // }
 
     async function getIdToken() {
         const token = await miro.getIdToken()
@@ -63,24 +64,23 @@ function App() {
     }
 
     async function isAuthorized() {
-        const isAuthorized = await miro.isAuthorized()
-        await updateAuthState()
+        const isAuthorized = await updateAuthState()
         console.error(`Is authorized: "${isAuthorized}"`)
         await miro.showNotification(`Is authorized ${isAuthorized}`)
     }
 
-    async function authorize() {
-        const redirectUrl = new URL(window.location.href)
-        redirectUrl.pathname = "/install"
-
-        const token = await miro.authorize({
-            state: "test-state",
-            redirect_uri: redirectUrl.href
-        })
-        await updateAuthState()
-        console.error(`Authorize token: "${token}"`)
-        alert(`You should not use this method!!! Authorize token: "${token}"`)
-    }
+    // async function authorize() {
+    //     const redirectUrl = new URL(window.location.href)
+    //     redirectUrl.pathname = "/install"
+    //
+    //     const token = await miro.authorize({
+    //         state: "test-state",
+    //         redirect_uri: redirectUrl.href
+    //     })
+    //     await updateAuthState()
+    //     console.error(`Authorize token: "${token}"`)
+    //     alert(`You should not use this method!!! Authorize token: "${token}"`)
+    // }
 
     async function requestAuthorization() {
         const redirectUrl = new URL(window.location.href)
