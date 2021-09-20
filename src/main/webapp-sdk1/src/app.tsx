@@ -28,6 +28,7 @@ function App() {
         setBoardState({title: boardInfo.title})
     }
 
+    // be careful with this call
     async function deleteAllContent() {
         const allObjects = await miro.board.widgets.get()
         if (!allObjects.length) {
@@ -159,8 +160,8 @@ function App() {
             <div>Board title is: {boardState.title}</div>
             <br/>
             <button onClick={() => getBoardTitle()}>Get board title</button>
-            <br/>
-            <button onClick={() => deleteAllContent()}>Delete all content</button>
+            {/*<br/>*/}
+            {/*<button onClick={() => deleteAllContent()}>Delete all content</button>*/}
             <br/>
             <button onClick={() => getScopes()}>getScopes</button>
             <br/>
@@ -181,8 +182,8 @@ function App() {
             <br/>
             <br/>
             <button onClick={() => getSelfUser()}>call backend: getSelfUser</button>
-            <br/>
-            <button onClick={() => createBoard()}>call backend: createBoard</button>
+            {/*<br/>*/}
+            {/*<button onClick={() => createBoard()}>call backend: create new Board in account</button>*/}
         </div>
     )
 }
