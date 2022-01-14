@@ -13,7 +13,7 @@ import java.util.Collections
 class HeadersController {
 
     @GetMapping("/headers")
-    fun listUsers(model: Model): String? {
+    fun listHeaders(model: Model): String? {
         initModelAttributes(model)
         return "headers"
     }
