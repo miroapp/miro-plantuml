@@ -17,8 +17,8 @@
 
     <properties>
         <java.version>11</java.version>
-        <node.version>v16.13.1</node.version>
-        <npm.version>8.3.0</npm.version>
+        <node.version>v17.6.0</node.version>
+        <npm.version>8.5.2</npm.version>
         <bootstrap.version>4.2.1</bootstrap.version>
 
         <webapp-sdk1.dir>src/main/webapp-sdk1</webapp-sdk1.dir>
