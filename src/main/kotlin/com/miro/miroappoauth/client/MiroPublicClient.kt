@@ -1,11 +1,7 @@
 package com.miro.miroappoauth.client
 
-import com.miro.miroappoauth.dto.AccessType
-import com.miro.miroappoauth.dto.BoardDto
-import com.miro.miroappoauth.dto.CreateBoardDto
+import com.miro.miroappoauth.dto.*
 import com.miro.miroappoauth.dto.CreateBoardDto.SharingPolicyDto
-import com.miro.miroappoauth.dto.TeamAccessType
-import com.miro.miroappoauth.dto.UserDto
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod.GET
@@ -19,11 +15,19 @@ import org.springframework.web.client.RestTemplate
 class MiroPublicClient(
     private val rest: RestTemplate
 ) {
+
     fun getSelfUser(accessToken: String): UserDto {
         val headers = HttpHeaders().apply { setBearerAuth(accessToken) }
         val request = HttpEntity<Any>(null, headers)
 
         return rest.exchange("/v1/users/me", GET, request, UserDto::class.java).body!!
+    }
+
+    fun getSelfUserV2(accessToken: String, userId: Long): UserDto {
+        val headers = HttpHeaders().apply { setBearerAuth(accessToken) }
+        val request = HttpEntity<Any>(null, headers)
+
+        return rest.exchange("/v2/users/{userId}", GET, request, UserDto::class.java, userId).body!!
     }
 
     fun createBoard(
