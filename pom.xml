@@ -17,8 +17,8 @@
 
     <properties>
         <java.version>11</java.version>
-        <node.version>v17.6.0</node.version>
-        <npm.version>8.5.2</npm.version>
+        <node.version>v17.7.2</node.version>
+        <npm.version>8.5.5</npm.version>
         <bootstrap.version>4.2.1</bootstrap.version>
 
         <webapp-sdk1.dir>src/main/webapp-sdk1</webapp-sdk1.dir>
@@ -141,7 +141,7 @@
             <plugin>
                 <groupId>com.github.eirslett</groupId>
                 <artifactId>frontend-maven-plugin</artifactId>
-                <version>1.12.0</version>
+                <version>1.12.1</version>
                 <configuration>
                     <workingDirectory>${webapp-sdk1.dir}</workingDirectory>
                 </configuration>
