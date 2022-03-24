@@ -10,5 +10,6 @@ data class AppProperties(
     val miroApiBaseUrl: String,
     val teamId: Long?,
     val clientId: Long,
-    val clientSecret: String
+    val clientSecret: String,
+    val appName: String?
 )

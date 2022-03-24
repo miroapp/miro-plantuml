@@ -100,8 +100,12 @@ class HomeController(
             .query(null)
             .build().toUri()
         val webPlugin = UriComponentsBuilder.fromHttpRequest(request)
-            .replacePath("/webapp-sdk1/index.html")
-            .query(null)
+            .replacePath("/webapp-sdk1/index.html").apply {
+                query(null)
+                if (appProperties.appName != null) {
+                    queryParam("appName", appProperties.appName)
+                }
+            }
             .build().toUri()
 
         val referer = servletRequest.getHeader(HttpHeaders.REFERER)
