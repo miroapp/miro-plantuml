@@ -17,7 +17,7 @@
 
     <properties>
         <java.version>11</java.version>
-        <node.version>v17.7.2</node.version>
+        <node.version>v17.8.0</node.version>
         <npm.version>8.5.5</npm.version>
         <bootstrap.version>4.2.1</bootstrap.version>
 
