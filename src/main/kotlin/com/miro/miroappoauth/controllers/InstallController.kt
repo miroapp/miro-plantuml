@@ -41,7 +41,15 @@ class InstallController(
         val accessToken = tokenService.getAccessToken(code, redirectUri, appProperties.clientId)
         session.setAttribute(SESSION_ATTR_USER_ID, accessToken.userId)
 
-        session.setAttribute(SESSION_ATTR_MESSAGE, "Application successfully authorized")
-        return "redirect:/#access_tokens"
+//        session.setAttribute(SESSION_ATTR_MESSAGE, "Application successfully authorized")
+//        return "redirect:/#access_tokens"
+
+        val returnUrl = UriComponentsBuilder.fromHttpUrl(appProperties.miroBaseUrl)
+            .replacePath("/app-install-completed/")
+            .queryParam("client_id", appProperties.clientId)
+            .queryParam("team_id", accessToken.teamId)
+            .build()
+            .toUri()
+        return "redirect:$returnUrl"
     }
 }
