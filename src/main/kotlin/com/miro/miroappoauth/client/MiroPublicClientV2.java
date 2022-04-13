@@ -28,16 +28,16 @@ public class MiroPublicClientV2 {
         return rest.exchange("/v2/users/{userId}", GET, request, UserDto.class, userId).getBody();
     }
 
-    public CreateRectangleResp createRectangleShape(
+    public CreateShapeResp createShape(
             String accessToken,
             String boardId,
-            CreateRectangleReq createRectangleReq
+            CreateShapeReq createShapeReq
     ) {
         var headers = new HttpHeaders();
         headers.setBearerAuth(accessToken);
 
-        var request = new HttpEntity<>(createRectangleReq, headers);
-        return rest.exchange("/v2/boards/{board_id}/shapes", POST, request, CreateRectangleResp.class, boardId).getBody();
+        var request = new HttpEntity<>(createShapeReq, headers);
+        return rest.exchange("/v2/boards/{board_id}/shapes", POST, request, CreateShapeResp.class, boardId).getBody();
     }
 
     public CreateImageResp createImage(

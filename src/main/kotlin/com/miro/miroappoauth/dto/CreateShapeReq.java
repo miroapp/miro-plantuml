@@ -1,28 +1,28 @@
 package com.miro.miroappoauth.dto;
 
-public class CreateRectangleReq {
+public class CreateShapeReq {
 
-    private ShapeData data = new ShapeData("");
+    private ShapeData data = new ShapeData(ShapeType.rectangle, "");
     private ShapePosition position;
     private ShapeStyle style = new ShapeStyle();
     private ShapeGeometry geometry;
 
-    public CreateRectangleReq setData(ShapeData data) {
+    public CreateShapeReq setData(ShapeData data) {
         this.data = data;
         return this;
     }
 
-    public CreateRectangleReq setPosition(ShapePosition position) {
+    public CreateShapeReq setPosition(ShapePosition position) {
         this.position = position;
         return this;
     }
 
-    public CreateRectangleReq setStyle(ShapeStyle style) {
+    public CreateShapeReq setStyle(ShapeStyle style) {
         this.style = style;
         return this;
     }
 
-    public CreateRectangleReq setGeometry(ShapeGeometry geometry) {
+    public CreateShapeReq setGeometry(ShapeGeometry geometry) {
         this.geometry = geometry;
         return this;
     }
@@ -44,11 +44,11 @@ public class CreateRectangleReq {
     }
 
     public static class ShapeData {
+        private final ShapeType shapeType;
         private final String content;
 
-        private final String shapeType = "rectangle";
-
-        public ShapeData(String content) {
+        public ShapeData(ShapeType shapeType, String content) {
+            this.shapeType = shapeType;
             this.content = content;
         }
 
@@ -56,7 +56,7 @@ public class CreateRectangleReq {
             return content;
         }
 
-        public String getShapeType() {
+        public ShapeType getShapeType() {
             return shapeType;
         }
     }

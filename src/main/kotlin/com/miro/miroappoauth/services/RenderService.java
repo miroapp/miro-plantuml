@@ -59,31 +59,34 @@ public class RenderService {
 
     // ShapeWidget{uid=4eacb9d9..., id=0, x=31.0, y=5.5, width=16.0, height=16.0, color='ff181818', backgroundColor='ffe2e2f0'}
     public String render(ShapeWidget shape) {
-        var createRectReq = new CreateRectangleReq()
-                .setData(new CreateRectangleReq.ShapeData(""))
+        var createRectReq = new CreateShapeReq()
+                .setData(new CreateShapeReq.ShapeData(ShapeType.fromString(shape.getForm()), ""))
                 .setPosition(new ShapePosition(shape.getX(), shape.getY()))
-                .setStyle(new CreateRectangleReq.ShapeStyle()
+                .setStyle(new CreateShapeReq.ShapeStyle()
                         .setBorderColor(color(shape.getColor()))
                         .setFillColor(color(shape.getBackgroundColor())))
-                .setGeometry(new CreateRectangleReq.ShapeGeometry((int) (shape.getWidth() * 2), (int) (shape.getHeight() * 2)));
-        var createRectResp = clientV2.createRectangleShape(localAccessToken.get(), localBoardId.get(), createRectReq);
+                .setGeometry(new CreateShapeReq.ShapeGeometry((int) (shape.getWidth()), (int) (shape.getHeight())));
+        var createRectResp = clientV2.createShape(localAccessToken.get(), localBoardId.get(), createRectReq);
         return createRectResp.getId();
     }
 
     // LineWidget{uid=ecec37..., id=0, x=39.0, y=81.48828125, x2=39.0, y2=540.767578125, stroke='dashed', color='ff181818', type='straight'}
     public String render(LineWidget line) {
-        var createRectResp1 = clientV2.createRectangleShape(localAccessToken.get(), localBoardId.get(),
-                new CreateRectangleReq()
+        var createRectResp1 = clientV2.createShape(localAccessToken.get(), localBoardId.get(),
+                new CreateShapeReq()
                         .setPosition(new ShapePosition(line.getX(), line.getY()))
-                        // todo small
-                        .setGeometry(new CreateRectangleReq.ShapeGeometry(8, 8)));
+                        .setGeometry(new CreateShapeReq.ShapeGeometry(8, 8))
+                        .setStyle(new CreateShapeReq.ShapeStyle()
+                                .setBorderColor(BOARD_COLOR)
+                                .setFillColor(BOARD_COLOR)));
 
-        var createRectResp2 = clientV2.createRectangleShape(localAccessToken.get(), localBoardId.get(),
-                new CreateRectangleReq()
+        var createRectResp2 = clientV2.createShape(localAccessToken.get(), localBoardId.get(),
+                new CreateShapeReq()
                         .setPosition(new ShapePosition(line.getX2(), line.getY2()))
-                        // todo small
-                        .setGeometry(new CreateRectangleReq.ShapeGeometry(8, 8)));
-
+                        .setGeometry(new CreateShapeReq.ShapeGeometry(8, 8))
+                        .setStyle(new CreateShapeReq.ShapeStyle()
+                                .setBorderColor(BOARD_COLOR)
+                                .setFillColor(BOARD_COLOR)));
 
         var createLineReq = new CreateLineReq()
                 .setStartWidget(new WidgetId(createRectResp1.getId()))
@@ -118,4 +121,6 @@ public class RenderService {
             e.printStackTrace();
         }
     }
+
+    private static final String BOARD_COLOR = "#f2f2f2";
 }

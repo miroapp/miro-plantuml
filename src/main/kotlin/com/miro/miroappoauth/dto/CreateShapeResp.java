@@ -1,9 +1,9 @@
 package com.miro.miroappoauth.dto;
 
-public class CreateRectangleResp {
+public class CreateShapeResp {
     private String id;
 
-    public CreateRectangleResp setId(String id) {
+    public CreateShapeResp setId(String id) {
         this.id = id;
         return this;
     }
