@@ -39,6 +39,12 @@ public class RenderService {
         return instance;
     }
 
+    public void createPreviewImage(String accessToken, String boardId, String url) {
+        clientV2.createImage(accessToken, boardId, new CreateImageReq()
+                .setData(new CreateImageReq.ImageData(url))
+                .setPosition(new ShapePosition(0.0, 0.0d)));
+    }
+
     public void render(String accessToken, SubmitPlantumlReq req) {
         localAccessToken.set(accessToken);
         localBoardId.set(req.getBoardId());
@@ -78,11 +84,11 @@ public class RenderService {
     public String render(ShapeWidget shape) {
         var createRectReq = new CreateRectangleReq()
                 .setData(new CreateRectangleReq.ShapeData(""))
-                .setPosition(new CreateRectangleReq.ShapePosition(shape.getX(), shape.getY()))
+                .setPosition(new ShapePosition(shape.getX(), shape.getY()))
                 .setStyle(new CreateRectangleReq.ShapeStyle()
                         .setBorderColor(color(shape.getColor()))
                         .setFillColor(color(shape.getBackgroundColor())));
-        var createRectResp = clientV2.createRectangle(localAccessToken.get(), localBoardId.get(), createRectReq);
+        var createRectResp = clientV2.createRectangleShape(localAccessToken.get(), localBoardId.get(), createRectReq);
         return createRectResp.getId();
     }
 
