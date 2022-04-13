@@ -56,10 +56,9 @@ function App() {
 
     return (
         <div className="grid wrapper">
-            <h1 className="h1">Mermaid</h1>
+            <h1 className="h1">PlantUML</h1>
             <div className="cs1 ce12">
-                <a className="link link-primary" href="https://github.com/mermaid-js/mermaid"
-                   target="_blank">Documenation</a>
+                <a className="link link-primary" href="https://plantuml.com/" target="_blank">Documentation</a>
             </div>
             <div className="cs1 ce12 form-group">
                 <textarea className="textarea" placeholder="Code" rows={10} spellCheck={false}></textarea>

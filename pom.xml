@@ -21,6 +21,7 @@
         <yarn.version>v1.22.18</yarn.version>
         <bootstrap.version>4.2.1</bootstrap.version>
         <spring-framework.version>5.3.18</spring-framework.version>
+        <kotlin.version>1.6.20</kotlin.version>
 
         <webapp-sdk2.dir>src/main/webapp-sdk2</webapp-sdk2.dir>
     </properties>

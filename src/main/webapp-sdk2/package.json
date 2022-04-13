@@ -1,5 +1,5 @@
 {
-  "name": "miro-mermaid-plugin",
+  "name": "miro-plantuml-plugin",
   "version": "0.1.0",
   "licence": "MIT",
   "engines": {
