@@ -9,6 +9,7 @@ import net.sourceforge.plantuml.Option;
 import net.sourceforge.plantuml.SourceFileReader;
 import net.sourceforge.plantuml.ugraphic.miro.widgets.LineWidget;
 import net.sourceforge.plantuml.ugraphic.miro.widgets.ShapeWidget;
+import net.sourceforge.plantuml.ugraphic.miro.widgets.TextWidget;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -43,7 +44,7 @@ public class RenderService {
     public void createPreviewImage(String accessToken, String boardId, String url) {
         clientV2.createImage(accessToken, boardId, new CreateImageReq()
                 .setData(new CreateImageReq.ImageData(url))
-                .setPosition(new ShapePosition(0.0, 0.0d)));
+                .setPosition(new PositionDto(0.0, 0.0d)));
     }
 
     public void render(String accessToken, SubmitPlantumlReq req) {
@@ -57,11 +58,10 @@ public class RenderService {
         }
     }
 
-    // ShapeWidget{uid=4eacb9d9..., id=0, x=31.0, y=5.5, width=16.0, height=16.0, color='ff181818', backgroundColor='ffe2e2f0'}
     public String render(ShapeWidget shape) {
         var createRectReq = new CreateShapeReq()
                 .setData(new CreateShapeReq.ShapeData(ShapeType.fromString(shape.getForm()), ""))
-                .setPosition(new ShapePosition(shape.getX(), shape.getY()))
+                .setPosition(new PositionDto(shape.getX(), shape.getY()))
                 .setStyle(new CreateShapeReq.ShapeStyle()
                         .setBorderColor(color(shape.getColor()))
                         .setFillColor(color(shape.getBackgroundColor())))
@@ -70,11 +70,10 @@ public class RenderService {
         return createRectResp.getId();
     }
 
-    // LineWidget{uid=ecec37..., id=0, x=39.0, y=81.48828125, x2=39.0, y2=540.767578125, stroke='dashed', color='ff181818', type='straight'}
     public String render(LineWidget line) {
         var createRectResp1 = clientV2.createShape(localAccessToken.get(), localBoardId.get(),
                 new CreateShapeReq()
-                        .setPosition(new ShapePosition(line.getX(), line.getY()))
+                        .setPosition(new PositionDto(line.getX(), line.getY()))
                         .setGeometry(new CreateShapeReq.ShapeGeometry(8, 8))
                         .setStyle(new CreateShapeReq.ShapeStyle()
                                 .setBorderColor(BOARD_COLOR)
@@ -82,7 +81,7 @@ public class RenderService {
 
         var createRectResp2 = clientV2.createShape(localAccessToken.get(), localBoardId.get(),
                 new CreateShapeReq()
-                        .setPosition(new ShapePosition(line.getX2(), line.getY2()))
+                        .setPosition(new PositionDto(line.getX2(), line.getY2()))
                         .setGeometry(new CreateShapeReq.ShapeGeometry(8, 8))
                         .setStyle(new CreateShapeReq.ShapeStyle()
                                 .setBorderColor(BOARD_COLOR)
@@ -97,6 +96,17 @@ public class RenderService {
                         .setBorderStyle(LineBorderStyle.fromString(line.getStroke())));
         var createLineResp = clientV1.createLine(localAccessToken.get(), localBoardId.get(), createLineReq);
         return createLineResp.getId();
+    }
+
+    // TextWidget{uid=064b2e93-0ae3-4a10-a36e-145624e63793, id=0, x=579.4204790480273, y=82.88888888888889,
+    // text='POST us.miro.com/oauth/authorize', orientation=0, color='ff000000', fontSize=14, fontFamily='SansSerif'}
+    public String render(TextWidget text) {
+        var resp = clientV2.createText(localAccessToken.get(), localBoardId.get(), new CreateTextReq()
+                .setData(new CreateTextReq.TextData(text.getText()))
+                        .setPosition(new PositionDto(text.getX(), text.getY()))
+                .setStyle(new CreateTextReq.TextStyle()
+                        .setFontSize(Integer.toString(text.getFontSize()))));
+        return resp.getId();
     }
 
     private static String color(String color) {

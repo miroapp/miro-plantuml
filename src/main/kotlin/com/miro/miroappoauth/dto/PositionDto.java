@@ -1,18 +1,18 @@
 package com.miro.miroappoauth.dto;
 
-public class ShapePosition {
+public class PositionDto {
 
     private final double x;
     private final double y;
 
     private String origin = "center";
 
-    public ShapePosition(double x, double y) {
+    public PositionDto(double x, double y) {
         this.x = x;
         this.y = y;
     }
 
-    public ShapePosition setOrigin(String origin) {
+    public PositionDto setOrigin(String origin) {
         this.origin = origin;
         return this;
     }

@@ -340,6 +340,8 @@ public class UGraphicMiro extends AbstractCommonUGraphic implements ClipContaine
 					RenderService.getInstance().render((ShapeWidget) widget);
 				} else if (widget instanceof LineWidget) {
 					RenderService.getInstance().render((LineWidget) widget);
+				} else if (widget instanceof TextWidget) {
+					RenderService.getInstance().render((TextWidget) widget);
 				}
 			}
 		} catch (Throwable e) {

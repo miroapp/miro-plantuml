@@ -51,4 +51,16 @@ public class MiroPublicClientV2 {
         var request = new HttpEntity<>(createImageReq, headers);
         return rest.exchange("/v2/boards/{board_id}/images", POST, request, CreateImageResp.class, boardId).getBody();
     }
+
+    public CreateTextResp createText(
+            String accessToken,
+            String boardId,
+            CreateTextReq createTextReq
+    ) {
+        var headers = new HttpHeaders();
+        headers.setBearerAuth(accessToken);
+
+        var request = new HttpEntity<>(createTextReq, headers);
+        return rest.exchange("/v2/boards/{board_id}/texts", POST, request, CreateTextResp.class, boardId).getBody();
+    }
 }

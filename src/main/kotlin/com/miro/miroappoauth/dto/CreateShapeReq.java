@@ -3,7 +3,7 @@ package com.miro.miroappoauth.dto;
 public class CreateShapeReq {
 
     private ShapeData data = new ShapeData(ShapeType.rectangle, "");
-    private ShapePosition position;
+    private PositionDto position;
     private ShapeStyle style = new ShapeStyle();
     private ShapeGeometry geometry;
 
@@ -12,7 +12,7 @@ public class CreateShapeReq {
         return this;
     }
 
-    public CreateShapeReq setPosition(ShapePosition position) {
+    public CreateShapeReq setPosition(PositionDto position) {
         this.position = position;
         return this;
     }
@@ -31,7 +31,7 @@ public class CreateShapeReq {
         return data;
     }
 
-    public ShapePosition getPosition() {
+    public PositionDto getPosition() {
         return position;
     }
 

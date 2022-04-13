@@ -1,18 +1,16 @@
 package com.miro.miroappoauth.dto;
 
-import net.sourceforge.plantuml.ugraphic.miro.widgets.ShapeWidget;
-
 public class CreateImageReq {
 
     private ImageData data;
-    private ShapePosition position;
+    private PositionDto position;
 
     public CreateImageReq setData(ImageData data) {
         this.data = data;
         return this;
     }
 
-    public CreateImageReq setPosition(ShapePosition position) {
+    public CreateImageReq setPosition(PositionDto position) {
         this.position = position;
         return this;
     }
@@ -21,7 +19,7 @@ public class CreateImageReq {
         return data;
     }
 
-    public ShapePosition getPosition() {
+    public PositionDto getPosition() {
         return position;
     }
 
