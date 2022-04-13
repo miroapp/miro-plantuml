@@ -27,34 +27,32 @@ function App() {
     //     await miro.board.ui.closeModal();
     // }
 
-    // async function getSelfUser() {
-    //     const backendUrl = new URL(window.location.href)
-    //     backendUrl.pathname = "/get-self-user"
-    //
-    //     const token = await miro.board.getIdToken()
-    //     //resetAuthState()
-    //     axios.get(backendUrl.href,
-    //         {
-    //             headers: {
-    //                 "X-Miro-Token": token
-    //             }
-    //         })
-    //         .then((response: AxiosResponse) => {
-    //             console.error(`callBackend: "${response.data.name}"`)
-    //             //miro.v1.showNotification(`callBackend: user name="${response.data.name}"`)
-    //         })
-    //         .catch((error) => {
-    //             let message = error.message
-    //             if (error.response) {
-    //                 message = JSON.stringify(error.response.data)
-    //             } else if (error.request) {
-    //                 message = "request: " + error.request
-    //             }
-    //
-    //             console.error(`callBackend error: "${message}"`)
-    //             alert(`callBackend: error "${message}"`)
-    //         });
-    // }
+    async function getPreviewUrl() {
+        const backendUrl = new URL(window.location.href)
+        backendUrl.pathname = "/get-preview-url"
+        const urlWithParams = backendUrl.href + "?payload=" + encodeURIComponent(text);
+
+        axios.get(urlWithParams,
+            {
+                headers: {
+                }
+            })
+            .then((response: AxiosResponse) => {
+                console.error(`callBackend: "${response.data}"`)
+                //miro.v1.showNotification(`callBackend: user name="${response.data.name}"`)
+            })
+            .catch((error) => {
+                let message = error.message
+                if (error.response) {
+                    message = JSON.stringify(error.response.data)
+                } else if (error.request) {
+                    message = "request: " + error.request
+                }
+
+                console.error(`callBackend error: "${message}"`)
+                alert(`callBackend: error "${message}"`)
+            });
+    }
 
     async function submitPlantuml() {
         const backendUrl = new URL(window.location.href)
@@ -104,7 +102,18 @@ function App() {
                     className={cn('button', 'button-primary', {
                         'button-loading': isRendering
                     })}
-                    // onClick={getSelfUser}
+                    onClick={getPreviewUrl}
+                    type="button"
+                    disabled={isRendering}
+                >
+                    Preview
+                </button>
+            </div>
+            <div className="cs1 ce12">
+                <button
+                    className={cn('button', 'button-primary', {
+                        'button-loading': isRendering
+                    })}
                     onClick={submitPlantuml}
                     type="button"
                     disabled={isRendering}

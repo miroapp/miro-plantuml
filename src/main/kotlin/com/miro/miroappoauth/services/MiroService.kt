@@ -56,26 +56,4 @@ class MiroService(
             "Token not found for userId=$userId, teamId=$teamId, clientId=$clientId"
         )
     }
-
-    fun getSelfUser(token: Token): UserDto {
-        return doRequest(token) { accessToken -> miroPublicClientV2.getSelfUser(accessToken, token.accessToken.userId) }
-    }
-
-    /**
-     * Do an HTTP request re-authorizing (via refresh_token) if current access token has expired.
-     */
-    private fun <T> doRequest(token: Token, caller: (accessToken: String) -> T): T {
-        return try {
-            val result = caller(token.accessTokenValue())
-            tokenService.updateToken(token.accessTokenValue(), VALID)
-            result
-        } catch (e: Unauthorized) {
-            tokenService.updateToken(token.accessTokenValue(), INVALID)
-            if (token.accessToken.refreshToken == null) {
-                throw e
-            }
-            val newAccessToken = tokenService.refreshToken(token.accessTokenValue())
-            caller(newAccessToken.accessToken)
-        }
-    }
 }
