@@ -65,7 +65,8 @@ public class RenderService {
                 .setStyle(new CreateShapeReq.ShapeStyle()
                         .setBorderColor(color(shape.getColor()))
                         .setFillColor(color(shape.getBackgroundColor())))
-                .setGeometry(new CreateShapeReq.ShapeGeometry((int) (shape.getWidth()), (int) (shape.getHeight())));
+                .setGeometry(new CreateShapeReq.ShapeGeometry((int) (shape.getWidth()), (int) (shape.getHeight()))
+                        .setRotation((int)shape.getRotation()));
         var createRectResp = clientV2.createShape(localAccessToken.get(), localBoardId.get(), createRectReq);
         return createRectResp.getId();
     }
@@ -111,6 +112,7 @@ public class RenderService {
 
         var resp = clientV1.createWidget(localAccessToken.get(), localBoardId.get(),
                 new CreateTextReqV1(text.getText(), (int) text.getX(), (int) text.getY())
+                        .setWidth((int)text.getWidth())
                         .setStyle(new CreateTextReqV1.TextStyle()
                                 .setFontSize(text.getFontSize())));
         return resp.getId();

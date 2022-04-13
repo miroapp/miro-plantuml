@@ -7,6 +7,7 @@ public class TextWidget extends AbstractWidget {
 	private String color;
 	private int fontSize;
 	private String fontFamily;
+	private double width;
 
 	public TextWidget(double x, double y, String text) {
 		super(x, y);
@@ -50,6 +51,14 @@ public class TextWidget extends AbstractWidget {
 		return fontFamily;
 	}
 
+	public void setWidth(double width) {
+		this.width = width;
+	}
+
+	public double getWidth() {
+		return width;
+	}
+
 	@Override
 	public String toString() {
 		return "TextWidget{" +
@@ -62,6 +71,7 @@ public class TextWidget extends AbstractWidget {
 				", color='" + color + '\'' +
 				", fontSize=" + fontSize +
 				", fontFamily='" + fontFamily + '\'' +
+				", width=" + width +
 				'}';
 	}
 }

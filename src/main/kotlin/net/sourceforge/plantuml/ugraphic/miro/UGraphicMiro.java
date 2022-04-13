@@ -49,10 +49,8 @@ import java.awt.*;
 import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.*;
 import java.util.List;
-import java.util.Locale;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -168,9 +166,11 @@ public class UGraphicMiro extends AbstractCommonUGraphic implements ClipContaine
 	private void outPolygon(UPolygon shape) {
 		output.add("POLYGON:");
 		output.add("  points:");
+		List<Point2D.Double> translatedPoints = new ArrayList<>();
 		for (Point2D pt : shape.getPoints()) {
 			final double xp = getTranslateX() + pt.getX();
 			final double yp = getTranslateY() + pt.getY();
+			translatedPoints.add(new Point2D.Double(xp, yp));
 			output.add("   - " + pointd(xp, yp));
 		}
 		output.add("  stroke: " + getParam().getStroke());
@@ -179,6 +179,70 @@ public class UGraphicMiro extends AbstractCommonUGraphic implements ClipContaine
 		output.add("  backcolor: " + colorToString(getParam().getBackcolor()));
 		output.add("");
 
+		// try to detect arrow heads
+		if (translatedPoints.size() != 4) {
+			return;
+		}
+		Point2D.Double firstPoint = translatedPoints.get(0);
+		Point2D.Double leftTop = new Point2D.Double(firstPoint.x, firstPoint.y);
+		Point2D.Double rightBottom = new Point2D.Double(firstPoint.x, firstPoint.y);
+		for (Point2D.Double point : translatedPoints) {
+			if (point.x < leftTop.x) {
+				leftTop.x = point.x;
+			}
+			if (point.x > rightBottom.x) {
+				rightBottom.x = point.x;
+			}
+			if (point.y < leftTop.y) {
+				leftTop.y = point.y;
+			}
+			if (point.y > rightBottom.y) {
+				rightBottom.y = point.y;
+			}
+		}
+		double width = rightBottom.x - leftTop.x;
+		double height = rightBottom.y - leftTop.y;
+		double rotation = 0.0;
+
+		if (width > height) {
+			// the head is either to the left or to the right
+			Point2D.Double right = translatedPoints.stream()
+					.filter(p -> p.y != leftTop.y)
+					.filter(p -> p.y != rightBottom.y)
+					.max(Comparator.comparing(p -> p.x))
+					.get();
+			if (right.x == rightBottom.x) {
+				rotation = 90.0;
+			} else {
+				rotation = -90.0;
+			}
+		} else {
+			// the head is either to the top or to the bottom
+			Point2D.Double bottom = translatedPoints.stream()
+					.filter(p -> p.x != leftTop.x)
+					.filter(p -> p.x != rightBottom.x)
+					.max(Comparator.comparing(p -> p.y))
+					.get();
+			if (bottom.y == rightBottom.y) {
+				rotation = 180.0;
+			}
+		}
+		Point2D.Double center = new Point2D.Double(
+				midPoint(leftTop.x, width),
+				midPoint(leftTop.y, height)
+		);
+
+		ShapeWidget widget = new ShapeWidget(
+				center.x,
+				center.y,
+				Math.min(width, height),
+				Math.max(width, height)
+		);
+		widget.setForm("triangle");
+		widget.setRotation(rotation);
+		widget.setColor(colorToString(getParam().getColor()));
+		widget.setBackgroundColor(colorToString(getParam().getBackcolor()));
+		widgets.add(widget);
 	}
 
 	private void outText(UText shape) {
@@ -196,6 +260,7 @@ public class UGraphicMiro extends AbstractCommonUGraphic implements ClipContaine
 				midPoint(getTranslateX(), rect.getWidth()),
 				midPoint(getTranslateY(), rect.getHeight()),
 				shape.getText());
+		widget.setWidth(rect.getWidth());
 		widget.setOrientation(shape.getOrientation()); // TODO convert to Miro orientation
 		widget.setFontSize(shape.getFontConfiguration().getFont().getSize());
 		widget.setFontFamily(shape.getFontConfiguration().getFont().getFamily(null));
@@ -235,8 +300,8 @@ public class UGraphicMiro extends AbstractCommonUGraphic implements ClipContaine
 
 	}
 
-	private static double midPoint(double left, double size) {
-		return left + size / 2.0;
+	private static double midPoint(double min, double size) {
+		return min + size / 2.0;
 	}
 
 	private void outRectangle(URectangle shape) {
@@ -258,6 +323,7 @@ public class UGraphicMiro extends AbstractCommonUGraphic implements ClipContaine
 				shape.getHeight()
 		);
 		widget.setForm("rectangle");
+		widget.setColor(colorToString(getParam().getColor()));// todo convert to miro
 		widget.setBackgroundColor(colorToString(getParam().getBackcolor()));// todo convert to miro
 		widgets.add(widget);
 	}

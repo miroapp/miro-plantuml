@@ -6,6 +6,7 @@ public class ShapeWidget extends AbstractWidget {
     private String color;
     private String backgroundColor;
     private String form;
+    private double rotation;
 
     public ShapeWidget(double x, double y, double width, double height) {
         super(x, y);
@@ -45,6 +46,14 @@ public class ShapeWidget extends AbstractWidget {
         return height;
     }
 
+    public double getRotation() {
+        return rotation;
+    }
+
+    public void setRotation(double rotation) {
+        this.rotation = rotation;
+    }
+
     @Override
     public String toString() {
         return "ShapeWidget{" +
@@ -57,6 +66,7 @@ public class ShapeWidget extends AbstractWidget {
                 ", color='" + color + '\'' +
                 ", backgroundColor='" + backgroundColor + '\'' +
                 ", form='" + form + '\'' +
+                ", rotation=" + rotation +
                 '}';
     }
 }

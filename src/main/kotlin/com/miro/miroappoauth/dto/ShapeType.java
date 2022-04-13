@@ -6,6 +6,7 @@ import java.util.stream.Stream;
 
 public enum ShapeType {
     rectangle,
+    triangle,
     circle;
 
     public static ShapeType fromString(@Nullable String value) {
