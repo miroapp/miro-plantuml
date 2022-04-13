@@ -41,7 +41,7 @@ public class CreateLineReq {
 
     public static class LineStyle {
         private String borderColor = "#da0063";
-        private String borderStyle = "normal";
+        private LineBorderStyle borderStyle = LineBorderStyle.normal;
         private int borderWidth = 1;
         private LineEndType lineStartType = LineEndType.none;
         private LineEndType lineEndType = LineEndType.none;
@@ -52,7 +52,7 @@ public class CreateLineReq {
             return this;
         }
 
-        public LineStyle setBorderStyle(String borderStyle) {
+        public LineStyle setBorderStyle(LineBorderStyle borderStyle) {
             this.borderStyle = borderStyle;
             return this;
         }
@@ -81,7 +81,7 @@ public class CreateLineReq {
             return borderColor;
         }
 
-        public String getBorderStyle() {
+        public LineBorderStyle getBorderStyle() {
             return borderStyle;
         }
 

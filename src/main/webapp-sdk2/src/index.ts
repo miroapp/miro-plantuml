@@ -3,7 +3,7 @@ async function init() {
     await miro.board.ui.openModal({
       url: 'app.html',
       width: 600,
-      height: 470,
+      height: 480,
       fullscreen: false,
     });
   });

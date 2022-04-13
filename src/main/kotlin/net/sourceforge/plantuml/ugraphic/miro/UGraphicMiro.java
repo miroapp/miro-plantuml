@@ -334,10 +334,16 @@ public class UGraphicMiro extends AbstractCommonUGraphic implements ClipContaine
 
 		widgets.forEach(System.out::println);
 
-		for (Widget widget : widgets) {
-			if (widget instanceof ShapeWidget) {
-				RenderService.getInstance().render((ShapeWidget) widget);
+		try {
+			for (Widget widget : widgets) {
+				if (widget instanceof ShapeWidget) {
+					RenderService.getInstance().render((ShapeWidget) widget);
+				} else if (widget instanceof LineWidget) {
+					RenderService.getInstance().render((LineWidget) widget);
+				}
 			}
+		} catch (Throwable e) {
+			e.printStackTrace();
 		}
 	}
 

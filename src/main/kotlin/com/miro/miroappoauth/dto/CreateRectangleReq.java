@@ -2,9 +2,10 @@ package com.miro.miroappoauth.dto;
 
 public class CreateRectangleReq {
 
-    private ShapeData data;
+    private ShapeData data = new ShapeData("");
     private ShapePosition position;
-    private ShapeStyle style;
+    private ShapeStyle style = new ShapeStyle();
+    private ShapeGeometry geometry;
 
     public CreateRectangleReq setData(ShapeData data) {
         this.data = data;
@@ -21,6 +22,11 @@ public class CreateRectangleReq {
         return this;
     }
 
+    public CreateRectangleReq setGeometry(ShapeGeometry geometry) {
+        this.geometry = geometry;
+        return this;
+    }
+
     public ShapeData getData() {
         return data;
     }
@@ -31,6 +37,10 @@ public class CreateRectangleReq {
 
     public ShapeStyle getStyle() {
         return style;
+    }
+
+    public ShapeGeometry getGeometry() {
+        return geometry;
     }
 
     public static class ShapeData {
@@ -50,7 +60,6 @@ public class CreateRectangleReq {
             return shapeType;
         }
     }
-
 
     public static class ShapeStyle {
         private String fillColor = "#fff9b1";
@@ -148,4 +157,32 @@ public class CreateRectangleReq {
         }
     }
 
+    public static class ShapeGeometry {
+        private final int width;
+        private final int height;
+
+        private int rotation = 0;
+
+        public ShapeGeometry(int width, int height) {
+            this.width = width;
+            this.height = height;
+        }
+
+        public ShapeGeometry setRotation(int rotation) {
+            this.rotation = rotation;
+            return this;
+        }
+
+        public int getWidth() {
+            return width;
+        }
+
+        public int getHeight() {
+            return height;
+        }
+
+        public int getRotation() {
+            return rotation;
+        }
+    }
 }

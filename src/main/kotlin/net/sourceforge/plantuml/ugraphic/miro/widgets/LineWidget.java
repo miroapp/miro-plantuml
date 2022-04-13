@@ -38,6 +38,14 @@ public class LineWidget extends AbstractWidget {
         this.type = type;
     }
 
+    public double getX2() {
+        return x2;
+    }
+
+    public double getY2() {
+        return y2;
+    }
+
     @Override
     public String toString() {
         return "LineWidget{" +

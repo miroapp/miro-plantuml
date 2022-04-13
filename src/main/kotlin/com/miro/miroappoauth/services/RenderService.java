@@ -7,6 +7,7 @@ import net.sourceforge.plantuml.GeneratedImage;
 import net.sourceforge.plantuml.ISourceFileReader;
 import net.sourceforge.plantuml.Option;
 import net.sourceforge.plantuml.SourceFileReader;
+import net.sourceforge.plantuml.ugraphic.miro.widgets.LineWidget;
 import net.sourceforge.plantuml.ugraphic.miro.widgets.ShapeWidget;
 import org.springframework.stereotype.Service;
 
@@ -54,30 +55,6 @@ public class RenderService {
             localAccessToken.remove();
             localBoardId.remove();
         }
-
-/*
-        String boardId = req.getBoardId();
-
-        var createRectReq1 = new CreateRectangleReq()
-                .setData(new CreateRectangleReq.ShapeData("text1"))
-                .setPosition(new CreateRectangleReq.ShapePosition(-100.0, -100.0))
-                .setStyle(new CreateRectangleReq.ShapeStyle());
-        var createRectResp1 = clientV2.createRectangle(accessToken, boardId, createRectReq1);
-
-        var createRectReq2 = new CreateRectangleReq()
-                .setData(new CreateRectangleReq.ShapeData("text2"))
-                .setPosition(new CreateRectangleReq.ShapePosition(100.0, 100.0))
-                .setStyle(new CreateRectangleReq.ShapeStyle());
-        var createRectResp2 = clientV2.createRectangle(accessToken, boardId, createRectReq2);
-
-        var createLineReq = new CreateLineReq()
-                .setStartWidget(new WidgetId(createRectResp1.getId()))
-                .setEndWidget(new WidgetId(createRectResp2.getId()))
-                .setStyle(new CreateLineReq.LineStyle()
-                        .setLineStartType(LineEndType.none)
-                        .setLineEndType(LineEndType.open_arrow));
-        clientV1.createLine(accessToken, boardId, createLineReq);
-        */
     }
 
     // ShapeWidget{uid=4eacb9d9..., id=0, x=31.0, y=5.5, width=16.0, height=16.0, color='ff181818', backgroundColor='ffe2e2f0'}
@@ -87,9 +64,36 @@ public class RenderService {
                 .setPosition(new ShapePosition(shape.getX(), shape.getY()))
                 .setStyle(new CreateRectangleReq.ShapeStyle()
                         .setBorderColor(color(shape.getColor()))
-                        .setFillColor(color(shape.getBackgroundColor())));
+                        .setFillColor(color(shape.getBackgroundColor())))
+                .setGeometry(new CreateRectangleReq.ShapeGeometry((int) (shape.getWidth() * 2), (int) (shape.getHeight() * 2)));
         var createRectResp = clientV2.createRectangleShape(localAccessToken.get(), localBoardId.get(), createRectReq);
         return createRectResp.getId();
+    }
+
+    // LineWidget{uid=ecec37..., id=0, x=39.0, y=81.48828125, x2=39.0, y2=540.767578125, stroke='dashed', color='ff181818', type='straight'}
+    public String render(LineWidget line) {
+        var createRectResp1 = clientV2.createRectangleShape(localAccessToken.get(), localBoardId.get(),
+                new CreateRectangleReq()
+                        .setPosition(new ShapePosition(line.getX(), line.getY()))
+                        // todo small
+                        .setGeometry(new CreateRectangleReq.ShapeGeometry(8, 8)));
+
+        var createRectResp2 = clientV2.createRectangleShape(localAccessToken.get(), localBoardId.get(),
+                new CreateRectangleReq()
+                        .setPosition(new ShapePosition(line.getX2(), line.getY2()))
+                        // todo small
+                        .setGeometry(new CreateRectangleReq.ShapeGeometry(8, 8)));
+
+
+        var createLineReq = new CreateLineReq()
+                .setStartWidget(new WidgetId(createRectResp1.getId()))
+                .setEndWidget(new WidgetId(createRectResp2.getId()))
+                .setStyle(new CreateLineReq.LineStyle()
+                        .setLineStartType(LineEndType.none)
+                        .setLineEndType(LineEndType.none)
+                        .setBorderStyle(LineBorderStyle.fromString(line.getStroke())));
+        var createLineResp = clientV1.createLine(localAccessToken.get(), localBoardId.get(), createLineReq);
+        return createLineResp.getId();
     }
 
     private static String color(String color) {

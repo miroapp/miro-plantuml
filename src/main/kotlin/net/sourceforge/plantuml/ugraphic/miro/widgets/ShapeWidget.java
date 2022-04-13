@@ -37,6 +37,14 @@ public class ShapeWidget extends AbstractWidget {
         this.form = form;
     }
 
+    public double getWidth() {
+        return width;
+    }
+
+    public double getHeight() {
+        return height;
+    }
+
     @Override
     public String toString() {
         return "ShapeWidget{" +
