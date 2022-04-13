@@ -1,16 +1,15 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="MiroAppOAuthApplication local" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot">
-    <module name="miro-app-oauth" />
+    <option name="ACTIVE_PROFILES" value="local" />
+    <module name="miro-plantuml" />
+    <option name="SHORTEN_COMMAND_LINE" value="NONE" />
+    <option name="SPRING_BOOT_MAIN_CLASS" value="com.miro.miroappoauth.MiroAppOAuthApplication" />
     <extension name="coverage">
       <pattern>
         <option name="PATTERN" value="com.miro.miroappoauth.*" />
         <option name="ENABLED" value="true" />
       </pattern>
     </extension>
-    <option name="SPRING_BOOT_MAIN_CLASS" value="com.miro.miroappoauth.MiroAppOAuthApplication" />
-    <option name="ACTIVE_PROFILES" value="local" />
-    <option name="ALTERNATIVE_JRE_PATH" />
-    <option name="SHORTEN_COMMAND_LINE" value="NONE" />
     <method v="2">
       <option name="Make" enabled="true" />
       <option name="Maven.BeforeRunTask" enabled="true" file="$PROJECT_DIR$/pom.xml" goal="generate-resources" />

@@ -21,7 +21,7 @@ spring.mvc:
   log-request-details: true
 
 spring.datasource:
-  url: jdbc:h2:file:./miro-app-oauth_h2;MODE=PostgreSQL;DB_CLOSE_DELAY=-1
+  url: jdbc:h2:file:./miro-plantuml_h2;MODE=PostgreSQL;DB_CLOSE_DELAY=-1
   driver-class-name: org.h2.Driver
 
 spring.h2.console:

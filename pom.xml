@@ -10,9 +10,9 @@
     </parent>
 
     <groupId>com.miro</groupId>
-    <artifactId>miro-app-oauth</artifactId>
+    <artifactId>miro-plantuml</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>miro-app-oauth</name>
+    <name>miro-plantuml</name>
     <description>Demo project for Miro oauth</description>
 
     <properties>

@@ -54,10 +54,10 @@ To avoid confusion, please note, that "Session ID" and "User ID" on the "State" 
 browser session based on cookies (this way you can check different authorizations).
 
 # Database console
-By default, the server starts embedded H2 database (file-based: `miro-app-oauth_h2.mv.db` in the local directory),
+By default, the server starts embedded H2 database (file-based: `miro-plantuml_h2.mv.db` in the local directory),
 you can access database console at
 http://localhost:3333/h2-console (https://localhost:3333/h2-console)
-Pass JDBC URL: `jdbc:h2:file:./miro-app-oauth_h2`, empty User Name and Password to Connect.
+Pass JDBC URL: `jdbc:h2:file:./miro-plantuml_h2`, empty User Name and Password to Connect.
 
 # Authorization flow
 ```mermaid
