@@ -1,5 +1,8 @@
 package com.miro.miroappoauth.dto;
 
 public enum LineType {
-    orthogonal
+    straight,
+    orthogonal,
+    bezier,
+    sketch
 }
