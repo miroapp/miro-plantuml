@@ -4,7 +4,7 @@ import cn from 'classnames'
 import axios, {AxiosResponse} from "axios";
 
 function App() {
-    // const [isRendering, setRendering] = React.useState(false);
+    const [isRendering, setRendering] = React.useState(false);
 
     // async function addSomeElements() {
     //     setRendering(true);
