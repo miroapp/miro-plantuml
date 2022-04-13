@@ -35,6 +35,39 @@ function App() {
             });
     }
 
+    async function submitPreviewImage() {
+        const backendUrl = new URL(window.location.href)
+        backendUrl.pathname = "/submit-preview-image"
+
+        const boardInfo = await miro.board.getInfo()
+        console.error("boardId " + boardInfo.id)
+        const token = await miro.board.getIdToken()
+        console.error("Token " + token)
+        axios.post(backendUrl.href,
+            {
+                "boardId" : boardInfo.id,
+                "payload": text
+            }, {
+                headers: {
+                    "X-Miro-Token": token
+                }
+            })
+            .then((response: AxiosResponse) => {
+                console.error(`callBackend: "${response.data}"`)
+            })
+            .catch((error) => {
+                let message = error.message
+                if (error.response) {
+                    message = JSON.stringify(error.response.data)
+                } else if (error.request) {
+                    message = "request: " + error.request
+                }
+
+                console.error(`callBackend error: "${message}"`)
+                alert(`callBackend: error "${message}"`)
+            });
+    }
+
     async function submitPlantuml() {
         const backendUrl = new URL(window.location.href)
         backendUrl.pathname = "/submit-plantuml"
@@ -102,6 +135,16 @@ function App() {
             {link && (
                 <div className="cs1 ce12">
                     <a href={link} target="_blank">Preview link</a>
+                    <button
+                        className={cn('button', 'button-primary', {
+                            'button-loading': isRendering
+                        })}
+                        onClick={submitPreviewImage}
+                        type="button"
+                        disabled={isRendering}
+                    >
+                        Add as image
+                    </button>
                 </div>
             )}
         </div>

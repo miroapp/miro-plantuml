@@ -1,8 +1,6 @@
 package com.miro.miroappoauth.client;
 
-import com.miro.miroappoauth.dto.CreateRectangleReq;
-import com.miro.miroappoauth.dto.CreateRectangleResp;
-import com.miro.miroappoauth.dto.UserDto;
+import com.miro.miroappoauth.dto.*;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.client.RestTemplate;
@@ -30,7 +28,7 @@ public class MiroPublicClientV2 {
         return rest.exchange("/v2/users/{userId}", GET, request, UserDto.class, userId).getBody();
     }
 
-    public CreateRectangleResp createRectangle(
+    public CreateRectangleResp createRectangleShape(
             String accessToken,
             String boardId,
             CreateRectangleReq createRectangleReq
@@ -40,5 +38,17 @@ public class MiroPublicClientV2 {
 
         var request = new HttpEntity<>(createRectangleReq, headers);
         return rest.exchange("/v2/boards/{board_id}/shapes", POST, request, CreateRectangleResp.class, boardId).getBody();
+    }
+
+    public CreateImageResp createImage(
+            String accessToken,
+            String boardId,
+            CreateImageReq createImageReq
+    ) {
+        var headers = new HttpHeaders();
+        headers.setBearerAuth(accessToken);
+
+        var request = new HttpEntity<>(createImageReq, headers);
+        return rest.exchange("/v2/boards/{board_id}/images", POST, request, CreateImageResp.class, boardId).getBody();
     }
 }
