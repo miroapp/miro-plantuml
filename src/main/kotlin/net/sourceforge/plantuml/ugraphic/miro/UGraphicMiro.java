@@ -48,7 +48,6 @@ import java.awt.*;
 import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -219,12 +218,20 @@ public class UGraphicMiro extends AbstractCommonUGraphic implements ClipContaine
 		output.add("  backcolor: " + colorToString(getParam().getBackcolor()));
 		output.add("");
 
-		ShapeWidget shapeWidget = new ShapeWidget(getTranslateX(), getTranslateY(), shape.getWidth(), shape.getHeight());
-		// todo add shapeForm: oval, circle, etc.
+		ShapeWidget shapeWidget = new ShapeWidget(
+				midPoint(getTranslateX(), shape.getWidth()),
+				midPoint(getTranslateY(), shape.getHeight()),
+				shape.getWidth(),
+				shape.getHeight());
+		shapeWidget.setForm("circle");
 		shapeWidget.setColor(colorToString(getParam().getColor())); // todo convert to miro
 		shapeWidget.setBackgroundColor(colorToString(getParam().getBackcolor())); // todo convert to miro
 		widgets.add(shapeWidget);
 
+	}
+
+	private static double midPoint(double left, double size) {
+		return left + size / 2.0;
 	}
 
 	private void outRectangle(URectangle shape) {
@@ -239,6 +246,15 @@ public class UGraphicMiro extends AbstractCommonUGraphic implements ClipContaine
 		output.add("  backcolor: " + colorToString(getParam().getBackcolor()));
 		output.add("");
 
+		ShapeWidget widget = new ShapeWidget(
+				midPoint(getTranslateX(), shape.getWidth()),
+				midPoint(getTranslateY(), shape.getHeight()),
+				shape.getWidth(),
+				shape.getHeight()
+		);
+		widget.setForm("rectangle");
+		widget.setBackgroundColor(colorToString(getParam().getBackcolor()));// todo convert to miro
+		widgets.add(widget);
 	}
 
 	private void outLine(ULine shape) {
@@ -250,12 +266,24 @@ public class UGraphicMiro extends AbstractCommonUGraphic implements ClipContaine
 		output.add("  color: " + colorToString(getParam().getColor()));
 		output.add("");
 
-		LineWidget line = new LineWidget(getTranslateX(), getTranslateY(),
-						getTranslateX() + shape.getDX(), getTranslateY() + shape.getDY());
-		//line.setStroke(getParam().getStroke()); // TODO convert to Miro stroke
+		LineWidget line = new LineWidget(
+				getTranslateX(), getTranslateY(),
+				getTranslateX() + shape.getDX(), getTranslateY() + shape.getDY());
+		line.setStroke(convertStroke(getParam().getStroke()));
+		line.setType("straight");
 		line.setColor(colorToString(getParam().getColor())); // TODO convert to MIRO color
 		widgets.add(line);
 
+	}
+
+	private static String convertStroke(UStroke stroke){
+		if (stroke.getDashVisible() > 0.0) {
+			return "dashed";
+		}
+		if (stroke.getThickness() > 0.0) {
+			return "dotted";
+		}
+		return "normal";
 	}
 
 	private String pointd(double x, double y) {
@@ -295,13 +323,14 @@ public class UGraphicMiro extends AbstractCommonUGraphic implements ClipContaine
 
 		for (String s : output) {
 			print(os, s);
+			System.out.println(s);
 		}
 		os.flush();
 
 		widgets.forEach(System.out::println);
 	}
 
-	private void print(OutputStream os, String out) throws UnsupportedEncodingException, IOException {
+	private void print(OutputStream os, String out) throws IOException {
 		os.write(out.getBytes(UTF_8));
 		os.write("\n".getBytes(UTF_8));
 	}
