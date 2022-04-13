@@ -1,0 +1,23 @@
+package com.miro.miroappoauth.client
+
+import com.miro.miroappoauth.dto.UserDto
+import org.springframework.http.HttpEntity
+import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpMethod.GET
+import org.springframework.web.client.RestTemplate
+
+/**
+ * See [Miro REST API](https://developers.miro.com/reference).
+ * Note: we use camelCase for json parsing here.
+ */
+class MiroPublicV1Client(
+    private val rest: RestTemplate
+) {
+
+    fun getSelfUser(accessToken: String): UserDto {
+        val headers = HttpHeaders().apply { setBearerAuth(accessToken) }
+        val request = HttpEntity<Any>(null, headers)
+
+        return rest.exchange("/v1/users/me", GET, request, UserDto::class.java).body!!
+    }
+}

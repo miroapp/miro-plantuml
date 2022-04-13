@@ -1,15 +1,13 @@
 package com.miro.miroappoauth.services
 
 import com.miro.miroappoauth.client.MiroAuthClient
-import com.miro.miroappoauth.client.MiroPublicClient
+import com.miro.miroappoauth.client.MiroPublicV1Client
 import com.miro.miroappoauth.config.AppProperties
 import com.miro.miroappoauth.dto.AccessTokenDto
 import com.miro.miroappoauth.dto.UserDto
 import com.miro.miroappoauth.model.Token
 import com.miro.miroappoauth.model.TokenState
-import com.miro.miroappoauth.model.TokenState.INVALID
-import com.miro.miroappoauth.model.TokenState.NEW
-import com.miro.miroappoauth.model.TokenState.VALID
+import com.miro.miroappoauth.model.TokenState.*
 import org.springframework.dao.DuplicateKeyException
 import org.springframework.stereotype.Service
 import org.springframework.web.client.HttpClientErrorException.Unauthorized
@@ -20,7 +18,7 @@ class TokenService(
     private val appProperties: AppProperties,
     private val tokenStore: TokenStore,
     private val miroAuthClient: MiroAuthClient,
-    private val miroPublicClient: MiroPublicClient
+    private val miroPublicV1Client: MiroPublicV1Client
 ) {
 
     fun getAccessToken(code: String, redirectUri: String, clientId: Long): AccessTokenDto {
@@ -59,7 +57,7 @@ class TokenService(
 
     fun getSelfUser(accessToken: String): UserDto {
         try {
-            val self = miroPublicClient.getSelfUser(accessToken)
+            val self = miroPublicV1Client.getSelfUser(accessToken)
             updateToken(accessToken, VALID)
             return self
         } catch (e: Unauthorized) {

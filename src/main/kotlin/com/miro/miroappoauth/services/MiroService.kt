@@ -3,11 +3,8 @@ package com.miro.miroappoauth.services
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.exceptions.JWTVerificationException
-import com.miro.miroappoauth.client.MiroPublicClient
+import com.miro.miroappoauth.client.MiroPublicV1Client
 import com.miro.miroappoauth.config.AppProperties
-import com.miro.miroappoauth.dto.AccessType
-import com.miro.miroappoauth.dto.BoardDto
-import com.miro.miroappoauth.dto.TeamAccessType
 import com.miro.miroappoauth.dto.UserDto
 import com.miro.miroappoauth.exceptions.UnauthorizedException
 import com.miro.miroappoauth.model.Token
@@ -21,7 +18,7 @@ import org.springframework.web.client.HttpClientErrorException.Unauthorized
 class MiroService(
     private val appProperties: AppProperties,
     private val tokenService: TokenService,
-    private val miroPublicClient: MiroPublicClient
+    private val miroPublicV1Client: MiroPublicV1Client
 ) {
 
     private val log = LoggerFactory.getLogger(MiroService::class.java)
@@ -61,18 +58,7 @@ class MiroService(
     }
 
     fun getSelfUser(token: Token): UserDto {
-        return doRequest(token) { accessToken -> miroPublicClient.getSelfUser(accessToken) }
-    }
-
-    fun createBoard(
-        token: Token,
-        name: String,
-        accessType: AccessType,
-        teamAccessType: TeamAccessType
-    ): BoardDto {
-        return doRequest(token) { accessToken ->
-            miroPublicClient.createBoard(accessToken, name, accessType, teamAccessType)
-        }
+        return doRequest(token) { accessToken -> miroPublicV1Client.getSelfUser(accessToken) }
     }
 
     /**
