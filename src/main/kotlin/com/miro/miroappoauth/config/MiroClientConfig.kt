@@ -8,8 +8,8 @@ import com.fasterxml.jackson.databind.SerializationFeature.INDENT_OUTPUT
 import com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMESTAMPS
 import com.miro.miroappoauth.client.LoggingInterceptor
 import com.miro.miroappoauth.client.MiroAuthClient
-import com.miro.miroappoauth.client.MiroPublicV1Client
-import com.miro.miroappoauth.client.MiroPublicV2Client
+import com.miro.miroappoauth.client.MiroPublicClientV1
+import com.miro.miroappoauth.client.MiroPublicClientV2
 import org.springframework.boot.web.client.RootUriTemplateHandler
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -38,7 +38,7 @@ class MiroClientConfig {
     }
 
     @Bean
-    fun miroPublicV1Client(appProperties: AppProperties): MiroPublicV1Client {
+    fun miroPublicV1Client(appProperties: AppProperties): MiroPublicClientV1 {
         val restTemplate = RestTemplate().apply {
             requestFactory = HttpClientFactory().defaultRequestFactory()
             messageConverters = listOf(
@@ -48,11 +48,11 @@ class MiroClientConfig {
             interceptors = listOf(LoggingInterceptor())
             uriTemplateHandler = RootUriTemplateHandler(appProperties.miroApiBaseUrl)
         }
-        return MiroPublicV1Client(restTemplate)
+        return MiroPublicClientV1(restTemplate)
     }
 
     @Bean
-    fun miroPublicV2Client(appProperties: AppProperties): MiroPublicV2Client {
+    fun miroPublicV2Client(appProperties: AppProperties): MiroPublicClientV2 {
         val restTemplate = RestTemplate().apply {
             requestFactory = HttpClientFactory().defaultRequestFactory()
             messageConverters = listOf(
@@ -62,7 +62,7 @@ class MiroClientConfig {
             interceptors = listOf(LoggingInterceptor())
             uriTemplateHandler = RootUriTemplateHandler(appProperties.miroApiBaseUrl)
         }
-        return MiroPublicV2Client(restTemplate)
+        return MiroPublicClientV2(restTemplate)
     }
 
     private fun clientObjectMapper(propertyNamingStrategy: PropertyNamingStrategy) = Jackson2ObjectMapperBuilder()

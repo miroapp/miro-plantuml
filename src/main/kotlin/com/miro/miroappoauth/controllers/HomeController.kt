@@ -50,8 +50,10 @@ class HomeController(
         session: HttpSession,
         @RequestParam("access_token") accessToken: String
     ): String {
+        val userId = session.getAttribute(SESSION_ATTR_USER_ID) as Long?
+            ?: throw java.lang.IllegalStateException("Missing $SESSION_ATTR_USER_ID session attribute")
         try {
-            tokenService.getSelfUser(accessToken)
+            tokenService.getSelfUser(accessToken, userId)
             session.setAttribute(SESSION_ATTR_MESSAGE, "Token is valid")
         } catch (e: Unauthorized) {
             session.setAttribute(SESSION_ATTR_MESSAGE, "Token is not valid")

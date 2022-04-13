@@ -3,7 +3,7 @@ package com.miro.miroappoauth.services
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.exceptions.JWTVerificationException
-import com.miro.miroappoauth.client.MiroPublicV1Client
+import com.miro.miroappoauth.client.MiroPublicClientV2
 import com.miro.miroappoauth.config.AppProperties
 import com.miro.miroappoauth.dto.UserDto
 import com.miro.miroappoauth.exceptions.UnauthorizedException
@@ -18,7 +18,7 @@ import org.springframework.web.client.HttpClientErrorException.Unauthorized
 class MiroService(
     private val appProperties: AppProperties,
     private val tokenService: TokenService,
-    private val miroPublicV1Client: MiroPublicV1Client
+    private val miroPublicClientV2: MiroPublicClientV2
 ) {
 
     private val log = LoggerFactory.getLogger(MiroService::class.java)
@@ -58,7 +58,7 @@ class MiroService(
     }
 
     fun getSelfUser(token: Token): UserDto {
-        return doRequest(token) { accessToken -> miroPublicV1Client.getSelfUser(accessToken) }
+        return doRequest(token) { accessToken -> miroPublicClientV2.getSelfUser(accessToken, token.accessToken.userId) }
     }
 
     /**

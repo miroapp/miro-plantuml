@@ -1,7 +1,7 @@
 package com.miro.miroappoauth.services
 
 import com.miro.miroappoauth.client.MiroAuthClient
-import com.miro.miroappoauth.client.MiroPublicV1Client
+import com.miro.miroappoauth.client.MiroPublicClientV2
 import com.miro.miroappoauth.config.AppProperties
 import com.miro.miroappoauth.dto.AccessTokenDto
 import com.miro.miroappoauth.dto.UserDto
@@ -18,7 +18,7 @@ class TokenService(
     private val appProperties: AppProperties,
     private val tokenStore: TokenStore,
     private val miroAuthClient: MiroAuthClient,
-    private val miroPublicV1Client: MiroPublicV1Client
+    private val miroPublicClientV2: MiroPublicClientV2
 ) {
 
     fun getAccessToken(code: String, redirectUri: String, clientId: Long): AccessTokenDto {
@@ -55,9 +55,9 @@ class TokenService(
         }
     }
 
-    fun getSelfUser(accessToken: String): UserDto {
+    fun getSelfUser(accessToken: String, userId: Long): UserDto {
         try {
-            val self = miroPublicV1Client.getSelfUser(accessToken)
+            val self = miroPublicClientV2.getSelfUser(accessToken, userId)
             updateToken(accessToken, VALID)
             return self
         } catch (e: Unauthorized) {

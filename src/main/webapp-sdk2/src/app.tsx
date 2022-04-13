@@ -6,6 +6,7 @@ import axios, {AxiosResponse} from "axios";
 function App() {
     // const [isRendering, setRendering] = React.useState(false);
     const [isRendering] = React.useState(false);
+    const [text, setText] = React.useState('');
 
     // async function addSomeElements() {
     //     setRendering(true);
@@ -66,7 +67,7 @@ function App() {
         axios.post(backendUrl.href,
             {
                 "boardId" : boardInfo.id,
-                "payload": "@startuml \""
+                "payload": text
             }, {
                 headers: {
                     "X-Miro-Token": token
@@ -96,7 +97,7 @@ function App() {
                 <a className="link link-primary" href="https://plantuml.com/" target="_blank">Documentation</a>
             </div>
             <div className="cs1 ce12 form-group">
-                <textarea className="textarea" placeholder="Code" rows={10} spellCheck={false}></textarea>
+                <textarea value={text} onChange={(e) => setText(e.target.value)} className="textarea" placeholder="Code" rows={10} spellCheck={false}></textarea>
             </div>
             <div className="cs1 ce12">
                 <button

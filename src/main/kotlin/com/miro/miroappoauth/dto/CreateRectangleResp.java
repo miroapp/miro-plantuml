@@ -1,11 +1,16 @@
 package com.miro.miroappoauth.dto;
 
-import lombok.Data;
-
-@Data
 public class CreateRectangleResp {
     private String id;
 
+    public CreateRectangleResp setId(String id) {
+        this.id = id;
+        return this;
+    }
+
+    public String getId() {
+        return id;
+    }
 }
 
 /*
