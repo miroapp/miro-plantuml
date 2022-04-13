@@ -17,12 +17,12 @@
 
     <properties>
         <java.version>11</java.version>
-        <node.version>v17.8.0</node.version>
-        <npm.version>8.5.5</npm.version>
+        <node.version>v16.13.2</node.version>
+        <yarn.version>v1.22.18</yarn.version>
         <bootstrap.version>4.2.1</bootstrap.version>
         <spring-framework.version>5.3.18</spring-framework.version>
 
-        <webapp-sdk1.dir>src/main/webapp-sdk1</webapp-sdk1.dir>
+        <webapp-sdk2.dir>src/main/webapp-sdk2</webapp-sdk2.dir>
     </properties>
 
     <dependencies>
@@ -107,7 +107,7 @@
                 <configuration>
                     <filesets>
                         <fileset>
-                            <directory>${webapp-sdk1.dir}/dist</directory>
+                            <directory>${webapp-sdk2.dir}/dist</directory>
                             <followSymlinks>false</followSymlinks>
                         </fileset>
                     </filesets>
@@ -144,39 +144,41 @@
                 <artifactId>frontend-maven-plugin</artifactId>
                 <version>1.12.1</version>
                 <configuration>
-                    <workingDirectory>${webapp-sdk1.dir}</workingDirectory>
+                    <workingDirectory>${webapp-sdk2.dir}</workingDirectory>
                 </configuration>
                 <executions>
                     <execution>
-                        <id>install node and npm</id>
+                        <id>install node and yarn</id>
                         <goals>
-                            <goal>install-node-and-npm</goal>
+                            <goal>install-node-and-yarn</goal>
                         </goals>
                         <configuration>
                             <nodeVersion>${node.version}</nodeVersion>
-                            <npmVersion>${npm.version}</npmVersion>
+                            <yarnVersion>${yarn.version}</yarnVersion>
                         </configuration>
                     </execution>
                     <execution>
-                        <id>npm install</id>
+                        <id>yarn install</id>
                         <goals>
-                            <goal>npm</goal>
+                            <goal>yarn</goal>
                         </goals>
                         <configuration>
-                            <arguments>install --loglevel=info</arguments>
+                            <!--todo verbose-->
+                            <arguments>install</arguments>
                         </configuration>
                     </execution>
                     <execution>
                         <id>webpack build dev</id>
                         <goals>
-                            <goal>npm</goal>
+                            <goal>yarn</goal>
                         </goals>
                         <configuration>
-                            <arguments>run build --loglevel=info</arguments>
+                            <!--todo -verbose-->
+                            <arguments>run build</arguments>
 <!--                            <environmentVariables>-->
 <!--                                <APP_VERSION>${project.version}</APP_VERSION>-->
 <!--                            </environmentVariables>-->
-<!--                            <npmInheritsProxyConfigFromMaven>false</npmInheritsProxyConfigFromMaven>-->
+<!--                            <yarnInheritsProxyConfigFromMaven>false</yarnInheritsProxyConfigFromMaven>-->
                         </configuration>
                     </execution>
                 </executions>
@@ -185,16 +187,16 @@
                 <artifactId>maven-resources-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>copy-built-webapp-sdk1</id>
+                        <id>copy-built-webapp-sdk2</id>
                         <goals>
                             <goal>copy-resources</goal>
                         </goals>
                         <phase>generate-resources</phase>
                         <configuration>
-                            <outputDirectory>${project.build.outputDirectory}/static/webapp-sdk1</outputDirectory>
+                            <outputDirectory>${project.build.outputDirectory}/static</outputDirectory>
                             <resources>
                                 <resource>
-                                    <directory>${webapp-sdk1.dir}/dist</directory>
+                                    <directory>${webapp-sdk2.dir}/dist</directory>
                                     <filtering>false</filtering>
                                 </resource>
                             </resources>

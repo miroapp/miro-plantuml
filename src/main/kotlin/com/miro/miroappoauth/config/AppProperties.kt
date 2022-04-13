@@ -11,5 +11,4 @@ data class AppProperties(
     val teamId: Long?,
     val clientId: Long,
     val clientSecret: String,
-    val appName: String?
 )

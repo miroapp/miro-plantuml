@@ -99,12 +99,10 @@ class HomeController(
             .replacePath(ENDPOINT_INSTALL)
             .query(null)
             .build().toUri()
+        // todo /webapp-sdk2
         val webPlugin = UriComponentsBuilder.fromHttpRequest(request)
-            .replacePath("/webapp-sdk1/index.html").apply {
+            .replacePath("/index.html").apply {
                 query(null)
-                if (appProperties.appName != null) {
-                    queryParam("appName", appProperties.appName)
-                }
             }
             .build().toUri()
 

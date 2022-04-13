@@ -11,7 +11,7 @@ miro.onReady((): void => {
         librarySvgIcon: icon,
         async onClick(): Promise<void> {
           // Remember that 'app.html' resolves relative to index.js file. So app.html have to be in the /dist/ folder.
-          await miro.board.ui.openLibrary('/webapp-sdk1/app.html', {title: title})
+          await miro.board.ui.openLibrary('/webapp-sdk2/app.html', {title: title})
         },
       },
     },
