@@ -34,6 +34,7 @@
  */
 package net.sourceforge.plantuml.ugraphic.miro;
 
+import com.miro.miroappoauth.services.RenderService;
 import net.sourceforge.plantuml.awt.geom.Dimension2D;
 import net.sourceforge.plantuml.posimo.DotPath;
 import net.sourceforge.plantuml.ugraphic.*;
@@ -162,7 +163,6 @@ public class UGraphicMiro extends AbstractCommonUGraphic implements ClipContaine
 		output.add("  color: " + colorToString(getParam().getColor()));
 		output.add("  backcolor: " + colorToString(getParam().getBackcolor()));
 		output.add("");
-
 	}
 
 	private void outPolygon(UPolygon shape) {
@@ -328,6 +328,12 @@ public class UGraphicMiro extends AbstractCommonUGraphic implements ClipContaine
 		os.flush();
 
 		widgets.forEach(System.out::println);
+
+		for (Widget widget : widgets) {
+			if (widget instanceof ShapeWidget) {
+				RenderService.getInstance().render((ShapeWidget) widget);
+			}
+		}
 	}
 
 	private void print(OutputStream os, String out) throws IOException {
