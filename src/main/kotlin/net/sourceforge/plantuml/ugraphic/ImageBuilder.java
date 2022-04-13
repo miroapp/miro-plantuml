@@ -104,6 +104,7 @@ import net.sourceforge.plantuml.ugraphic.eps.UGraphicEps;
 import net.sourceforge.plantuml.ugraphic.g2d.UGraphicG2d;
 import net.sourceforge.plantuml.ugraphic.hand.UGraphicHandwritten;
 import net.sourceforge.plantuml.ugraphic.html5.UGraphicHtml5;
+import net.sourceforge.plantuml.ugraphic.miro.UGraphicMiro;
 import net.sourceforge.plantuml.ugraphic.svg.UGraphicSvg;
 import net.sourceforge.plantuml.ugraphic.tikz.UGraphicTikz;
 import net.sourceforge.plantuml.ugraphic.txt.UGraphicTxt;
@@ -430,6 +431,9 @@ public class ImageBuilder {
 		case DEBUG:
 			return new UGraphicDebug(scaleFactor, dim, getSvgLinkTarget(), getHoverPathColorRGB(), seed,
 					getPreserveAspectRatio());
+		case MIRO:
+			return new UGraphicMiro(scaleFactor, dim, getSvgLinkTarget(), getHoverPathColorRGB(), seed,
+								getPreserveAspectRatio());
 		default:
 			throw new UnsupportedOperationException(option.getFileFormat().toString());
 		}

@@ -3,7 +3,19 @@ package com.miro.miroappoauth.services;
 import com.miro.miroappoauth.client.MiroPublicClientV1;
 import com.miro.miroappoauth.client.MiroPublicClientV2;
 import com.miro.miroappoauth.dto.*;
+import net.sourceforge.plantuml.GeneratedImage;
+import net.sourceforge.plantuml.ISourceFileReader;
+import net.sourceforge.plantuml.Option;
+import net.sourceforge.plantuml.SourceFileReader;
 import org.springframework.stereotype.Service;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.util.List;
 
 @Service
 public class RenderService {
@@ -17,6 +29,8 @@ public class RenderService {
     }
 
     public void render(String accessToken, SubmitPlantumlReq req) {
+        parse(req);
+
         String boardId = req.getBoardId();
 
         var createRectReq1 = new CreateRectangleReq()
@@ -38,5 +52,21 @@ public class RenderService {
                         .setLineStartType(LineEndType.none)
                         .setLineEndType(LineEndType.open_arrow));
         clientV1.createLine(accessToken, boardId, createLineReq);
+    }
+
+    private void parse(SubmitPlantumlReq req) {
+        Option option = new Option();
+        try {
+            File f = Files.createTempFile("foo", "bar").toFile();
+            try (FileOutputStream fos = new FileOutputStream(f)) {
+                fos.write(req.getPayload().getBytes(StandardCharsets.UTF_8));
+            }
+            ISourceFileReader sourceFileReader = new SourceFileReader(option.getDefaultDefines(f), f, null, option.getConfig(),
+                    option.getCharset(), option.getFileFormatOption());
+
+            List<GeneratedImage> images = sourceFileReader.getGeneratedImages();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
