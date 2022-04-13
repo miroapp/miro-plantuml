@@ -4,28 +4,9 @@ import cn from 'classnames'
 import axios, {AxiosResponse} from "axios";
 
 function App() {
-    // const [isRendering, setRendering] = React.useState(false);
     const [isRendering] = React.useState(false);
     const [text, setText] = React.useState('');
-
-    // async function addSomeElements() {
-    //     setRendering(true);
-    //
-    //     const shape1 = await miro.board.createShape({
-    //         content: 'Hello, World!',
-    //         shape: 'cloud'
-    //     });
-    //
-    //     await miro.board.createShape({
-    //         content: 'See ya',
-    //         shape: 'hexagon',
-    //         x: shape1.x + 200,
-    //         y: shape1.y
-    //     });
-    //
-    //     setRendering(false);
-    //     await miro.board.ui.closeModal();
-    // }
+    const [link, setLink] = React.useState('');
 
     async function getPreviewUrl() {
         const backendUrl = new URL(window.location.href)
@@ -39,7 +20,7 @@ function App() {
             })
             .then((response: AxiosResponse) => {
                 console.error(`callBackend: "${response.data}"`)
-                //miro.v1.showNotification(`callBackend: user name="${response.data.name}"`)
+                setLink(response.data);
             })
             .catch((error) => {
                 let message = error.message
@@ -73,7 +54,6 @@ function App() {
             })
             .then((response: AxiosResponse) => {
                 console.error(`callBackend: "${response.data}"`)
-                //miro.v1.showNotification(`callBackend: user name="${response.data.name}"`)
             })
             .catch((error) => {
                 let message = error.message
@@ -90,14 +70,14 @@ function App() {
 
     return (
         <div className="grid wrapper">
-            <h1 className="h1">PlantUML</h1>
+            <h2 className="h1">PlantUML</h2>
             <div className="cs1 ce12">
                 <a className="link link-primary" href="https://plantuml.com/" target="_blank">Documentation</a>
             </div>
             <div className="cs1 ce12 form-group">
                 <textarea value={text} onChange={(e) => setText(e.target.value)} className="textarea" placeholder="Code" rows={10} spellCheck={false}></textarea>
             </div>
-            <div className="cs1 ce12">
+            <div className="cs1 ce6 flex">
                 <button
                     className={cn('button', 'button-primary', {
                         'button-loading': isRendering
@@ -108,8 +88,6 @@ function App() {
                 >
                     Preview
                 </button>
-            </div>
-            <div className="cs1 ce12">
                 <button
                     className={cn('button', 'button-primary', {
                         'button-loading': isRendering
@@ -121,6 +99,11 @@ function App() {
                     {isRendering ? '' : 'Render'}
                 </button>
             </div>
+            {link && (
+                <div className="cs1 ce12">
+                    <a href={link} target="_blank">Preview link</a>
+                </div>
+            )}
         </div>
     );
 }

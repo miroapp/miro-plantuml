@@ -22,6 +22,16 @@ body {
   padding: 0 5px;
 }
 
+.flex {
+  display: flex;
+  justify-content: space-between;
+}
+
+.flex button {
+  display: block;
+  width: calc(50% - 15px);
+}
+
 .container {
   margin: 0 auto;
   background-color: var(--indigo50);
