@@ -94,18 +94,25 @@ public class RenderService {
                         .setLineStartType(LineEndType.none)
                         .setLineEndType(LineEndType.none)
                         .setBorderStyle(LineBorderStyle.fromString(line.getStroke())));
-        var createLineResp = clientV1.createLine(localAccessToken.get(), localBoardId.get(), createLineReq);
+        var createLineResp = clientV1.createWidget(localAccessToken.get(), localBoardId.get(), createLineReq);
         return createLineResp.getId();
     }
 
     // TextWidget{uid=064b2e93-0ae3-4a10-a36e-145624e63793, id=0, x=579.4204790480273, y=82.88888888888889,
     // text='POST us.miro.com/oauth/authorize', orientation=0, color='ff000000', fontSize=14, fontFamily='SansSerif'}
     public String render(TextWidget text) {
-        var resp = clientV2.createText(localAccessToken.get(), localBoardId.get(), new CreateTextReq()
-                .setData(new CreateTextReq.TextData(text.getText()))
-                        .setPosition(new PositionDto(text.getX(), text.getY()))
-                .setStyle(new CreateTextReq.TextStyle()
-                        .setFontSize(Integer.toString(text.getFontSize()))));
+        // todo text in v2 is created with border
+//        var resp = clientV2.createText(localAccessToken.get(), localBoardId.get(), new CreateTextReq()
+//                .setData(new CreateTextReq.TextData(text.getText()))
+//                        .setPosition(new PositionDto(text.getX(), text.getY()))
+//                .setStyle(new CreateTextReq.TextStyle()
+//                        .setFontSize(Integer.toString(text.getFontSize()))));
+//        return resp.getId();
+
+        var resp = clientV1.createWidget(localAccessToken.get(), localBoardId.get(),
+                new CreateTextReqV1(text.getText(), (int) text.getX(), (int) text.getY())
+                        .setStyle(new CreateTextReqV1.TextStyle()
+                                .setFontSize(text.getFontSize())));
         return resp.getId();
     }
 

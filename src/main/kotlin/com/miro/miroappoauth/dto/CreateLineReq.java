@@ -1,6 +1,9 @@
 package com.miro.miroappoauth.dto;
 
-public class CreateLineReq {
+/**
+ * <a href="https://developers.miro.com/reference/line">reference/line</a>
+ */
+public class CreateLineReq implements WidgetV1 {
 
     private final String type = "line";
 

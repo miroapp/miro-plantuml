@@ -1,7 +1,7 @@
 package com.miro.miroappoauth.client;
 
-import com.miro.miroappoauth.dto.CreateLineReq;
 import com.miro.miroappoauth.dto.CreateLineResp;
+import com.miro.miroappoauth.dto.WidgetV1;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.client.RestTemplate;
@@ -20,18 +20,15 @@ public class MiroPublicClientV1 {
         this.rest = rest;
     }
 
-    /**
-     * <a href="https://developers.miro.com/reference/line">reference/line</a>
-     */
-    public CreateLineResp createLine(
+    public CreateLineResp createWidget(
             String accessToken,
             String boardId,
-            CreateLineReq createLineReq
+            WidgetV1 widget
     ) {
         var headers = new HttpHeaders();
         headers.setBearerAuth(accessToken);
 
-        var request = new HttpEntity<>(createLineReq, headers);
+        var request = new HttpEntity<>(widget, headers);
         return rest.exchange("/v1/boards/{board_id}/widgets", POST, request, CreateLineResp.class, boardId).getBody();
     }
 }
