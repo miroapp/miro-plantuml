@@ -191,9 +191,14 @@ public class UGraphicMiro extends AbstractCommonUGraphic implements ClipContaine
 		output.add("  extendedColor: " + colorToString(shape.getFontConfiguration().getExtendedColor()));
 		output.add("");
 
-		TextWidget widget = new TextWidget(getTranslateX(), getTranslateY(), shape.getText());
+		Dimension2D rect = getStringBounder().calculateDimension(shape.getFontConfiguration().getFont(), shape.getText());
+		TextWidget widget = new TextWidget(
+				midPoint(getTranslateX(), rect.getWidth()),
+				midPoint(getTranslateY(), rect.getHeight()),
+				shape.getText());
 		widget.setOrientation(shape.getOrientation()); // TODO convert to Miro orientation
-		widget.setFont(shape.getFontConfiguration().toStringDebug());
+		widget.setFontSize(shape.getFontConfiguration().getFont().getSize());
+		widget.setFontFamily(shape.getFontConfiguration().getFont().getFamily(null));
 		widget.setColor(colorToString(shape.getFontConfiguration().getColor())); // TODO convert to MIRO color
 		widgets.add(widget);
 	}

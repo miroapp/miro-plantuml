@@ -4,8 +4,9 @@ public class TextWidget extends AbstractWidget {
 
 	private final String text;
 	private int orientation;
-	private String font;
 	private String color;
+	private int fontSize;
+	private String fontFamily;
 
 	public TextWidget(double x, double y, String text) {
 		super(x, y);
@@ -24,13 +25,6 @@ public class TextWidget extends AbstractWidget {
 		this.orientation = orientation;
 	}
 
-	public String getFont() {
-		return font;
-	}
-
-	public void setFont(String font) {
-		this.font = font;
-	}
 
 	public String getColor() {
 		return color;
@@ -40,17 +34,34 @@ public class TextWidget extends AbstractWidget {
 		this.color = color;
 	}
 
+	public void setFontSize(int fontSize) {
+		this.fontSize = fontSize;
+	}
+
+	public int getFontSize() {
+		return fontSize;
+	}
+
+	public void setFontFamily(String fontFamily) {
+		this.fontFamily = fontFamily;
+	}
+
+	public String getFontFamily() {
+		return fontFamily;
+	}
+
 	@Override
 	public String toString() {
 		return "TextWidget{" +
-						"uid=" + uid +
-						", id=" + id +
-						", x=" + x +
-						", y=" + y +
-						", text='" + text + '\'' +
-						", orientation=" + orientation +
-						", font='" + font + '\'' +
-						", color='" + color + '\'' +
-						'}';
+				"uid=" + uid +
+				", id=" + id +
+				", x=" + x +
+				", y=" + y +
+				", text='" + text + '\'' +
+				", orientation=" + orientation +
+				", color='" + color + '\'' +
+				", fontSize=" + fontSize +
+				", fontFamily='" + fontFamily + '\'' +
+				'}';
 	}
 }
