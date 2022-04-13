@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.SerializationFeature.WRITE_DATES_AS_TIMEST
 import com.miro.miroappoauth.client.LoggingInterceptor
 import com.miro.miroappoauth.client.MiroAuthClient
 import com.miro.miroappoauth.client.MiroPublicV1Client
+import com.miro.miroappoauth.client.MiroPublicV2Client
 import org.springframework.boot.web.client.RootUriTemplateHandler
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -48,6 +49,20 @@ class MiroClientConfig {
             uriTemplateHandler = RootUriTemplateHandler(appProperties.miroApiBaseUrl)
         }
         return MiroPublicV1Client(restTemplate)
+    }
+
+    @Bean
+    fun miroPublicV2Client(appProperties: AppProperties): MiroPublicV2Client {
+        val restTemplate = RestTemplate().apply {
+            requestFactory = HttpClientFactory().defaultRequestFactory()
+            messageConverters = listOf(
+                StringHttpMessageConverter(),
+                MappingJackson2HttpMessageConverter(clientObjectMapper(LOWER_CAMEL_CASE))
+            )
+            interceptors = listOf(LoggingInterceptor())
+            uriTemplateHandler = RootUriTemplateHandler(appProperties.miroApiBaseUrl)
+        }
+        return MiroPublicV2Client(restTemplate)
     }
 
     private fun clientObjectMapper(propertyNamingStrategy: PropertyNamingStrategy) = Jackson2ObjectMapperBuilder()

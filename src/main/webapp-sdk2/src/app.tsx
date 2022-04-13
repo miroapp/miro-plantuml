@@ -26,20 +26,54 @@ function App() {
     //     await miro.board.ui.closeModal();
     // }
 
-    async function getSelfUser() {
-        const backendUrl = new URL(window.location.href)
-        backendUrl.pathname = "/get-self-user"
+    // async function getSelfUser() {
+    //     const backendUrl = new URL(window.location.href)
+    //     backendUrl.pathname = "/get-self-user"
+    //
+    //     const token = await miro.board.getIdToken()
+    //     //resetAuthState()
+    //     axios.get(backendUrl.href,
+    //         {
+    //             headers: {
+    //                 "X-Miro-Token": token
+    //             }
+    //         })
+    //         .then((response: AxiosResponse) => {
+    //             console.error(`callBackend: "${response.data.name}"`)
+    //             //miro.v1.showNotification(`callBackend: user name="${response.data.name}"`)
+    //         })
+    //         .catch((error) => {
+    //             let message = error.message
+    //             if (error.response) {
+    //                 message = JSON.stringify(error.response.data)
+    //             } else if (error.request) {
+    //                 message = "request: " + error.request
+    //             }
+    //
+    //             console.error(`callBackend error: "${message}"`)
+    //             alert(`callBackend: error "${message}"`)
+    //         });
+    // }
 
+    async function submitPlantuml() {
+        const backendUrl = new URL(window.location.href)
+        backendUrl.pathname = "/submit-plantuml"
+
+        const boardInfo = await miro.board.getInfo()
+        console.error("boardId " + boardInfo.id)
         const token = await miro.board.getIdToken()
-        //resetAuthState()
-        axios.get(backendUrl.href,
+        console.error("Token " + token)
+        axios.post(backendUrl.href,
             {
+                "boardId" : boardInfo.id,
+                "payload": "@startuml \""
+            }, {
                 headers: {
                     "X-Miro-Token": token
                 }
             })
             .then((response: AxiosResponse) => {
-                console.error(`callBackend: "${response.data.name}"`)
+                console.error(`callBackend: "${response.data}"`)
                 //miro.v1.showNotification(`callBackend: user name="${response.data.name}"`)
             })
             .catch((error) => {
@@ -69,8 +103,8 @@ function App() {
                     className={cn('button', 'button-primary', {
                         'button-loading': isRendering
                     })}
-                    // onClick={addSomeElements}
-                    onClick={getSelfUser}
+                    // onClick={getSelfUser}
+                    onClick={submitPlantuml}
                     type="button"
                     disabled={isRendering}
                 >
