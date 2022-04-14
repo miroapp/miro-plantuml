@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class RenderService {
@@ -112,7 +113,6 @@ public class RenderService {
     // TextWidget{uid=064b2e93-0ae3-4a10-a36e-145624e63793, id=0, x=579.4204790480273, y=82.88888888888889,
     // text='POST us.miro.com/oauth/authorize', orientation=0, color='ff000000', fontSize=14, fontFamily='SansSerif'}
     public String render(TextWidget text) {
-        // todo text in v2 is created with border
         var resp = clientV2.createText(localAccessToken.get(), localBoardId.get(), new CreateTextReq()
                 .setData(new CreateTextReq.TextData(text.getText()))
                         .setPosition(new PositionDto(text.getX(), text.getY()))
@@ -137,18 +137,22 @@ public class RenderService {
     }
 
     private void parse(SubmitPlantumlReq req) {
-        Option option = new Option();
+        File inputFile = null;
         try {
-            File f = Files.createTempFile("foo", "bar").toFile();
-            try (FileOutputStream fos = new FileOutputStream(f)) {
+            inputFile = Files.createTempFile("plantuml_", UUID.randomUUID() + ".puml").toFile();
+            System.out.println("File: " + inputFile.getAbsolutePath());
+            try (FileOutputStream fos = new FileOutputStream(inputFile)) {
                 fos.write(req.getPayload().getBytes(StandardCharsets.UTF_8));
             }
-            ISourceFileReader sourceFileReader = new SourceFileReader(option.getDefaultDefines(f), f, null, option.getConfig(),
+            Option option = new Option();
+            ISourceFileReader sourceFileReader = new SourceFileReader(option.getDefaultDefines(inputFile), inputFile, null, option.getConfig(),
                     option.getCharset(), option.getFileFormatOption());
 
             List<GeneratedImage> images = sourceFileReader.getGeneratedImages();
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            inputFile.delete();
         }
     }
 
