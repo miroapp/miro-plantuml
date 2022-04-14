@@ -172,7 +172,18 @@ public class UGraphicMiro extends AbstractCommonUGraphic implements ClipContaine
 				LineWidget widget = new LineWidget(start.x, start.y, end.x, end.y);
 				widget.setType("straight");
 				widgets.add(widget);
-				output.add(widget.toString());
+			}
+			if (type == USegmentType.SEG_CUBICTO) {
+				if (start == null) {
+					System.err.println("start is null");
+					continue;
+				}
+				// SEG_CUBICTO has 3 points - use the last as the end of the line
+				end = new Point2D.Double(getTranslateX() + coord[4], getTranslateY() + coord[5]);
+
+				LineWidget widget = new LineWidget(start.x, start.y, end.x, end.y);
+				widget.setType("straight");
+				widgets.add(widget);
 			}
 		}
 
@@ -279,10 +290,10 @@ public class UGraphicMiro extends AbstractCommonUGraphic implements ClipContaine
 		output.add("");
 
 		// fixme magic constant
-		double width = shape.getText().length() * 7.5;// rect.getWidth();// / 1.164;
+		double width = shape.getText().length() * 7.0;// rect.getWidth();// / 1.164;
 		TextWidget widget = new TextWidget(
 				midPoint(getTranslateX(), width),
-				midPoint(getTranslateY(), rect.getHeight()),
+				midPoint(getTranslateY(), rect.getHeight() / 2),
 				shape.getText());
 		widget.setWidth(width);
 		widget.setOrientation(shape.getOrientation()); // TODO convert to Miro orientation
