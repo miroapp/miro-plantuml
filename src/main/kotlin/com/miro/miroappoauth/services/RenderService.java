@@ -113,19 +113,19 @@ public class RenderService {
     // text='POST us.miro.com/oauth/authorize', orientation=0, color='ff000000', fontSize=14, fontFamily='SansSerif'}
     public String render(TextWidget text) {
         // todo text in v2 is created with border
-//        var resp = clientV2.createText(localAccessToken.get(), localBoardId.get(), new CreateTextReq()
-//                .setData(new CreateTextReq.TextData(text.getText()))
-//                        .setPosition(new PositionDto(text.getX(), text.getY()))
-//                .setStyle(new CreateTextReq.TextStyle()
-//                        .setFontSize(Integer.toString(text.getFontSize()))));
-//        return resp.getId();
-
-        var resp = clientV1.createWidget(localAccessToken.get(), localBoardId.get(),
-                new CreateTextReqV1(text.getText(), (int) text.getX(), (int) text.getY())
-                        .setWidth((int)text.getWidth())
-                        .setStyle(new CreateTextReqV1.TextStyle()
-                                .setFontSize(text.getFontSize())));
+        var resp = clientV2.createText(localAccessToken.get(), localBoardId.get(), new CreateTextReq()
+                .setData(new CreateTextReq.TextData(text.getText()))
+                        .setPosition(new PositionDto(text.getX(), text.getY()))
+                .setStyle(new CreateTextReq.TextStyle()
+                        .setFontSize(Integer.toString(text.getFontSize()))));
         return resp.getId();
+
+//        var resp = clientV1.createWidget(localAccessToken.get(), localBoardId.get(),
+//                new CreateTextReqV1(text.getText(), (int) text.getX(), (int) text.getY())
+//                        .setWidth((int)text.getWidth())
+//                        .setStyle(new CreateTextReqV1.TextStyle()
+//                                .setFontSize(text.getFontSize())));
+//        return resp.getId();
     }
 
     @Nullable
