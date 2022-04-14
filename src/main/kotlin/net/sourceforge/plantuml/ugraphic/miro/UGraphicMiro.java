@@ -425,30 +425,32 @@ public class UGraphicMiro extends AbstractCommonUGraphic implements ClipContaine
 		widgets.forEach(System.out::println);
 
 		Map<UUID, LineWidgetsId> map = new LinkedHashMap<>();
-		try {
-			for (Widget widget : widgets) {
+		for (Widget widget : widgets) {
+			try {
 				if (widget instanceof LineWidget) {
 					var lineWidgetsId = RenderService.getInstance().prepareLineDots((LineWidget) widget);
 					map.put(widget.getUid(), lineWidgetsId);
 				}
+			} catch (Throwable e) {
+				e.printStackTrace();
 			}
-		} catch (Throwable e) {
-			e.printStackTrace();
 		}
 
-		try {
-			for (Widget widget : widgets) {
+		for (Widget widget : widgets) {
+			try {
 				if (widget instanceof ShapeWidget) {
 					RenderService.getInstance().render((ShapeWidget) widget);
 				} else if (widget instanceof LineWidget) {
-					LineWidgetsId lineWidgetsId = Objects.requireNonNull(map.get(widget.getUid()), "Missing");
-					RenderService.getInstance().render((LineWidget) widget, lineWidgetsId);
+					LineWidgetsId lineWidgetsId = map.get(widget.getUid());
+					if (lineWidgetsId != null) {
+						RenderService.getInstance().render((LineWidget) widget, lineWidgetsId);
+					}
 				} else if (widget instanceof TextWidget) {
 					RenderService.getInstance().render((TextWidget) widget);
 				}
+			} catch (Throwable e) {
+				e.printStackTrace();
 			}
-		} catch (Throwable e) {
-			e.printStackTrace();
 		}
 	}
 

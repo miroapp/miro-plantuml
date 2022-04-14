@@ -13,6 +13,7 @@ import net.sourceforge.plantuml.ugraphic.miro.widgets.ShapeWidget;
 import net.sourceforge.plantuml.ugraphic.miro.widgets.TextWidget;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -115,18 +116,23 @@ public class RenderService {
 
     // TextWidget{uid=064b2e93-0ae3-4a10-a36e-145624e63793, id=0, x=579.4204790480273, y=82.88888888888889,
     // text='POST us.miro.com/oauth/authorize', orientation=0, color='ff000000', fontSize=14, fontFamily='SansSerif'}
+    @Nullable
     public String render(TextWidget text) {
-        var resp = clientV2.createText(localAccessToken.get(), localBoardId.get(), new CreateTextReq()
-                .setData(new CreateTextReq.TextData(text.getText()))
-                        .setPosition(new PositionDto(text.getX(), text.getY()))
-                        .setGeometry(new CreateTextReq.TextGeometry(
-                                Math.max(MIN_TEXT_WIDTH, text.getWidth())))
-                        .setStyle(new CreateTextReq.TextStyle()
-                                .setFontSize(Integer.toString(text.getFontSize()))
-                                //.setFontFamily(text.getFontFamily())
-                        )
-        );
-        return resp.getId();
+        if (StringUtils.hasText(text.getText())) {
+            var resp = clientV2.createText(localAccessToken.get(), localBoardId.get(), new CreateTextReq()
+                    .setData(new CreateTextReq.TextData(text.getText()))
+                    .setPosition(new PositionDto(text.getX(), text.getY()))
+                    .setGeometry(new CreateTextReq.TextGeometry(
+                            Math.max(MIN_TEXT_WIDTH, text.getWidth())))
+                    .setStyle(new CreateTextReq.TextStyle()
+                            .setFontSize(Integer.toString(text.getFontSize()))
+                            //.setFontFamily(text.getFontFamily())
+                    )
+            );
+            return resp.getId();
+        } else {
+            return null;
+        }
 
 //        var resp = clientV1.createWidget(localAccessToken.get(), localBoardId.get(),
 //                new CreateTextReqV1(text.getText(), (int) text.getX(), (int) text.getY())
