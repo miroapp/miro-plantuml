@@ -48,7 +48,7 @@ public class CreateLineReq implements WidgetV1 {
         private int borderWidth = 1;
         private LineEndType lineStartType = LineEndType.none;
         private LineEndType lineEndType = LineEndType.none;
-        private LineType lineType = LineType.orthogonal;
+        private LineType lineType = LineType.straight;
 
         public LineStyle setBorderColor(String borderColor) {
             this.borderColor = borderColor;

@@ -139,6 +139,8 @@ public class UGraphicMiro extends AbstractCommonUGraphic implements ClipContaine
 
 	private void outPath(UPath shape) {
 		output.add("PATH:");
+		Point2D.Double start = null;
+		Point2D.Double end = null;
 		for (USegment seg : shape) {
 			final USegmentType type = seg.getSegmentType();
 			final double coord[] = seg.getCoord();
@@ -149,11 +151,29 @@ public class UGraphicMiro extends AbstractCommonUGraphic implements ClipContaine
 				output.add("     largeArcFlag: " + (coord[3] != 0));
 				output.add("     sweepFlag: " + (coord[4] != 0));
 				output.add("     dest: " + pointd(coord[5], coord[6]));
-			} else
+			} else {
 				for (int i = 0; i < type.getNbPoints(); i++) {
 					final String key = "     pt" + (i + 1) + ": ";
 					output.add(key + pointd(coord[2 * i], coord[2 * i + 1]));
 				}
+			}
+
+			if (type == USegmentType.SEG_MOVETO) {
+				start = new Point2D.Double(getTranslateX() + coord[0], getTranslateY() + coord[1]);
+			}
+			if (type == USegmentType.SEG_LINETO) {
+				if (start == null) {
+					System.err.println("start is null");
+					continue;
+				}
+				//end = new Point2D.Double(start.x + coord[0], start.y + coord[1]);
+				end = new Point2D.Double(getTranslateX() + coord[0], getTranslateY() + coord[1]);
+
+				LineWidget widget = new LineWidget(start.x, start.y, end.x, end.y);
+				widget.setType("straight");
+				widgets.add(widget);
+				output.add(widget.toString());
+			}
 		}
 
 		output.add("  stroke: " + getParam().getStroke());

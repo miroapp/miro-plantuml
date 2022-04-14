@@ -106,7 +106,9 @@ public class RenderService {
                 .setStyle(new CreateLineReq.LineStyle()
                         .setLineStartType(LineEndType.none)
                         .setLineEndType(LineEndType.none)
-                        .setBorderStyle(LineBorderStyle.fromString(line.getStroke())));
+                        .setBorderStyle(LineBorderStyle.fromString(line.getStroke()))
+                        .setLineType(LineType.fromString(line.getType()))
+                );
         var createLineResp = clientV1.createWidget(localAccessToken.get(), localBoardId.get(), createLineReq);
         return createLineResp.getId();
     }
