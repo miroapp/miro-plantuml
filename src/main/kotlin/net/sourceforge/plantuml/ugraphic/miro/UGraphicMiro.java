@@ -49,8 +49,8 @@ import java.awt.*;
 import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -400,12 +400,25 @@ public class UGraphicMiro extends AbstractCommonUGraphic implements ClipContaine
 
 		widgets.forEach(System.out::println);
 
+		Map<UUID, LineWidgetsId> map = new LinkedHashMap<>();
+		try {
+			for (Widget widget : widgets) {
+				if (widget instanceof LineWidget) {
+					var lineWidgetsId = RenderService.getInstance().prepareLineDots((LineWidget) widget);
+					map.put(widget.getUid(), lineWidgetsId);
+				}
+			}
+		} catch (Throwable e) {
+			e.printStackTrace();
+		}
+
 		try {
 			for (Widget widget : widgets) {
 				if (widget instanceof ShapeWidget) {
 					RenderService.getInstance().render((ShapeWidget) widget);
 				} else if (widget instanceof LineWidget) {
-					RenderService.getInstance().render((LineWidget) widget);
+					LineWidgetsId lineWidgetsId = Objects.requireNonNull(map.get(widget.getUid()), "Missing");
+					RenderService.getInstance().render((LineWidget) widget, lineWidgetsId);
 				} else if (widget instanceof TextWidget) {
 					RenderService.getInstance().render((TextWidget) widget);
 				}

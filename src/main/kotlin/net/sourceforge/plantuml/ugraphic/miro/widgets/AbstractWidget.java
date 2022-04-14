@@ -15,6 +15,10 @@ public abstract class AbstractWidget implements Widget {
 		this.y = y;
 	}
 
+	public UUID getUid() {
+		return uid;
+	}
+
 	@Override
 	public long getId() {
 		return id;

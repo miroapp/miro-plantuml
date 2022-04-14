@@ -7,6 +7,7 @@ import net.sourceforge.plantuml.GeneratedImage;
 import net.sourceforge.plantuml.ISourceFileReader;
 import net.sourceforge.plantuml.Option;
 import net.sourceforge.plantuml.SourceFileReader;
+import net.sourceforge.plantuml.ugraphic.miro.LineWidgetsId;
 import net.sourceforge.plantuml.ugraphic.miro.widgets.LineWidget;
 import net.sourceforge.plantuml.ugraphic.miro.widgets.ShapeWidget;
 import net.sourceforge.plantuml.ugraphic.miro.widgets.TextWidget;
@@ -71,7 +72,7 @@ public class RenderService {
         return createRectResp.getId();
     }
 
-    public String render(LineWidget line) {
+    public LineWidgetsId prepareLineDots(LineWidget line) {
         var createRectResp1 = clientV2.createShape(localAccessToken.get(), localBoardId.get(),
                 new CreateShapeReq()
                         .setPosition(new PositionDto(line.getX(), line.getY()))
@@ -88,9 +89,13 @@ public class RenderService {
                                 .setBorderColor(BOARD_COLOR)
                                 .setFillColor(BOARD_COLOR)));
 
+        return new LineWidgetsId(createRectResp1.getId(), createRectResp2.getId());
+    }
+
+    public String render(LineWidget line, LineWidgetsId lineWidgetsId) {
         var createLineReq = new CreateLineReq()
-                .setStartWidget(new WidgetId(createRectResp1.getId()))
-                .setEndWidget(new WidgetId(createRectResp2.getId()))
+                .setStartWidget(new WidgetId(lineWidgetsId.getStartWidgetId()))
+                .setEndWidget(new WidgetId(lineWidgetsId.getEndWidgetId()))
                 .setStyle(new CreateLineReq.LineStyle()
                         .setLineStartType(LineEndType.none)
                         .setLineEndType(LineEndType.none)
