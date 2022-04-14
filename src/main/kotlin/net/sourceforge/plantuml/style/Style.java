@@ -180,7 +180,7 @@ public class Style {
 	}
 
 	public UFont getUFont() {
-		final String family = value(PName.FontName).asString();
+		final String family = "PT Sans";//value(PName.FontName).asString();
 		final int fontStyle = value(PName.FontStyle).asFontStyle();
 		final int size = value(PName.FontSize).asInt();
 		return new UFont(family, fontStyle, size);

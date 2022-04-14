@@ -246,21 +246,25 @@ public class UGraphicMiro extends AbstractCommonUGraphic implements ClipContaine
 	}
 
 	private void outText(UText shape) {
+		Dimension2D rect = getStringBounder().calculateDimension(shape.getFontConfiguration().getFont(), shape.getText());
 		output.add("TEXT:");
 		output.add("  text: " + shape.getText());
 		output.add("  position: " + pointd(getTranslateX(), getTranslateY()));
+		output.add("  width: " + rect.getWidth());
+		output.add("  height: " + rect.getHeight());
 		output.add("  orientation: " + shape.getOrientation());
 		output.add("  font: " + shape.getFontConfiguration().toStringDebug());
 		output.add("  color: " + colorToString(shape.getFontConfiguration().getColor()));
 		output.add("  extendedColor: " + colorToString(shape.getFontConfiguration().getExtendedColor()));
 		output.add("");
 
-		Dimension2D rect = getStringBounder().calculateDimension(shape.getFontConfiguration().getFont(), shape.getText());
+		// fixme magic constant
+		double width = shape.getText().length() * 7.5;// rect.getWidth();// / 1.164;
 		TextWidget widget = new TextWidget(
-				midPoint(getTranslateX(), rect.getWidth()),
+				midPoint(getTranslateX(), width),
 				midPoint(getTranslateY(), rect.getHeight()),
 				shape.getText());
-		widget.setWidth(rect.getWidth());
+		widget.setWidth(width);
 		widget.setOrientation(shape.getOrientation()); // TODO convert to Miro orientation
 		widget.setFontSize(shape.getFontConfiguration().getFont().getSize());
 		widget.setFontFamily(shape.getFontConfiguration().getFont().getFamily(null));

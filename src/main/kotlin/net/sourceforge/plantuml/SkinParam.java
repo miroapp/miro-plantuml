@@ -435,26 +435,27 @@ public class SkinParam implements ISkinParam {
 	}
 
 	private String getFontFamily(Stereotype stereotype, FontParam... param) {
-		if (stereotype != null) {
-			checkStereotype(stereotype);
-			final String value2 = getFirstValueNonNullWithSuffix(
-					"fontname" + stereotype.getLabel(Guillemet.DOUBLE_COMPARATOR), param);
-			if (value2 != null)
-				return StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(value2);
-
-		}
-		// Times, Helvetica, Courier or Symbol
-		String value = getFirstValueNonNullWithSuffix("fontname", param);
-		if (value != null)
-			return StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(value);
-
-		if (param[0] != FontParam.CIRCLED_CHARACTER) {
-			value = getValue("defaultfontname");
-			if (value != null)
-				return StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(value);
-
-		}
-		return param[0].getDefaultFamily();
+		return "PT Sans";
+//		if (stereotype != null) {
+//			checkStereotype(stereotype);
+//			final String value2 = getFirstValueNonNullWithSuffix(
+//					"fontname" + stereotype.getLabel(Guillemet.DOUBLE_COMPARATOR), param);
+//			if (value2 != null)
+//				return StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(value2);
+//
+//		}
+//		// Times, Helvetica, Courier or Symbol
+//		String value = getFirstValueNonNullWithSuffix("fontname", param);
+//		if (value != null)
+//			return StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(value);
+//
+//		if (param[0] != FontParam.CIRCLED_CHARACTER) {
+//			value = getValue("defaultfontname");
+//			if (value != null)
+//				return StringUtils.eventuallyRemoveStartingAndEndingDoubleQuote(value);
+//
+//		}
+//		return param[0].getDefaultFamily();
 	}
 
 	public HColor getFontHtmlColor(Stereotype stereotype, FontParam... param) {

@@ -25,7 +25,8 @@ import java.util.UUID;
 @Service
 public class RenderService {
 
-    private static final int MIN_WIDTH = 8;
+    private static final int MIN_SHAPE_WIDTH = 8;
+    private static final int MIN_TEXT_WIDTH = 24;
 
     private static RenderService instance;
 
@@ -71,8 +72,8 @@ public class RenderService {
                         .setBorderColor(color(shape.getColor()))
                         .setFillColor(color(shape.getBackgroundColor())))
                 .setGeometry(new CreateShapeReq.ShapeGeometry(
-                        Math.max(MIN_WIDTH, (int) (shape.getWidth())),
-                        Math.max(MIN_WIDTH, (int) (shape.getHeight())))
+                        Math.max(MIN_SHAPE_WIDTH, (int) (shape.getWidth())),
+                        Math.max(MIN_SHAPE_WIDTH, (int) (shape.getHeight())))
                         .setRotation((int)shape.getRotation()));
         var createRectResp = clientV2.createShape(localAccessToken.get(), localBoardId.get(), createRectReq);
         return createRectResp.getId();
@@ -116,8 +117,13 @@ public class RenderService {
         var resp = clientV2.createText(localAccessToken.get(), localBoardId.get(), new CreateTextReq()
                 .setData(new CreateTextReq.TextData(text.getText()))
                         .setPosition(new PositionDto(text.getX(), text.getY()))
-                .setStyle(new CreateTextReq.TextStyle()
-                        .setFontSize(Integer.toString(text.getFontSize()))));
+                        .setGeometry(new CreateTextReq.TextGeometry(
+                                Math.max(MIN_TEXT_WIDTH, text.getWidth())))
+                        .setStyle(new CreateTextReq.TextStyle()
+                                .setFontSize(Integer.toString(text.getFontSize()))
+                                //.setFontFamily(text.getFontFamily())
+                        )
+        );
         return resp.getId();
 
 //        var resp = clientV1.createWidget(localAccessToken.get(), localBoardId.get(),

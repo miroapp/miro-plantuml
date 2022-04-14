@@ -4,6 +4,7 @@ public class CreateTextReq {
 
     private TextData data;
     private PositionDto position;
+    private TextGeometry geometry;
     private TextStyle style;
 
     public CreateTextReq setData(TextData data) {
@@ -21,6 +22,11 @@ public class CreateTextReq {
         return this;
     }
 
+    public CreateTextReq setGeometry(TextGeometry geometry) {
+        this.geometry = geometry;
+        return this;
+    }
+
     public TextData getData() {
         return data;
     }
@@ -31,6 +37,10 @@ public class CreateTextReq {
 
     public TextStyle getStyle() {
         return style;
+    }
+
+    public TextGeometry getGeometry() {
+        return geometry;
     }
 
     public static class TextData {
@@ -49,7 +59,7 @@ public class CreateTextReq {
     public static class TextStyle {
         private String fillColor;
         private String fillOpacity = "1.0";
-        private String fontFamily = "arial";
+        private String fontFamily = "pt_sans";
         private String fontSize = "14";
         private String textAlign = "center";
 
@@ -98,6 +108,23 @@ public class CreateTextReq {
             return textAlign;
         }
     }
+
+    /*
+    "geometry": {
+          "width": 0,
+          "rotation": 0
+     },
+     */
+    public static class TextGeometry {
+        private double width;
+        public TextGeometry(double width) {
+            this.width = width;
+        }
+
+        public double getWidth() {
+            return width;
+        }
+    }
 }
 
 /*
@@ -106,8 +133,5 @@ public class CreateTextReq {
           "y": 100,
           "origin": "center"
      },
-     "geometry": {
-          "width": 0,
-          "rotation": 0
-     },
+
  */
