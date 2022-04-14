@@ -4,11 +4,12 @@ import cn from 'classnames'
 import axios, {AxiosResponse} from "axios";
 
 function App() {
-    const [isRendering] = React.useState(false);
+    const [isRendering, setIsRendering] = React.useState(false);
     const [text, setText] = React.useState('');
     const [link, setLink] = React.useState('');
 
     async function getPreviewUrl() {
+        setIsRendering(true)
         const backendUrl = new URL(window.location.href)
         backendUrl.pathname = "/get-preview-url"
         const urlWithParams = backendUrl.href + "?payload=" + encodeURIComponent(text);
@@ -21,6 +22,7 @@ function App() {
             .then((response: AxiosResponse) => {
                 console.error(`callBackend: "${response.data}"`)
                 setLink(response.data);
+                setIsRendering(false)
             })
             .catch((error) => {
                 let message = error.message
@@ -36,6 +38,7 @@ function App() {
     }
 
     async function submitPreviewImage() {
+        setIsRendering(true)
         const backendUrl = new URL(window.location.href)
         backendUrl.pathname = "/submit-preview-image"
 
@@ -53,6 +56,7 @@ function App() {
                 }
             })
             .then((response: AxiosResponse) => {
+                setIsRendering(false)
                 console.error(`callBackend: "${response.data}"`)
             })
             .catch((error) => {
@@ -69,6 +73,7 @@ function App() {
     }
 
     async function submitPlantuml() {
+        setIsRendering(true)
         const backendUrl = new URL(window.location.href)
         backendUrl.pathname = "/submit-plantuml"
 
@@ -86,6 +91,8 @@ function App() {
                 }
             })
             .then((response: AxiosResponse) => {
+                setIsRendering(false)
+                miro.board.ui.closeModal()
                 console.error(`callBackend: "${response.data}"`)
             })
             .catch((error) => {
@@ -119,7 +126,7 @@ function App() {
                     type="button"
                     disabled={isRendering}
                 >
-                    Preview
+                    {isRendering ? '' : 'Preview'}
                 </button>
                 <button
                     className={cn('button', 'button-primary', {
@@ -129,22 +136,13 @@ function App() {
                     type="button"
                     disabled={isRendering}
                 >
-                    {isRendering ? '' : 'Render'}
+                    {isRendering ? '' : 'Add to board'}
                 </button>
             </div>
             {link && (
                 <div className="cs1 ce12">
-                    <a href={link} target="_blank">Preview link</a>
-                    <button
-                        className={cn('button', 'button-primary', {
-                            'button-loading': isRendering
-                        })}
-                        onClick={submitPreviewImage}
-                        type="button"
-                        disabled={isRendering}
-                    >
-                        Add as image
-                    </button>
+                    <a href={link} className="link link-primary" target="_blank" style={{ marginRight: '12px'}}>Preview link</a>
+                    <a className="link link-primary" onClick={submitPreviewImage}>Add as image to board</a>
                 </div>
             )}
         </div>
