@@ -11,6 +11,7 @@ import net.sourceforge.plantuml.ugraphic.miro.LineWidgetsId;
 import net.sourceforge.plantuml.ugraphic.miro.widgets.LineWidget;
 import net.sourceforge.plantuml.ugraphic.miro.widgets.ShapeWidget;
 import net.sourceforge.plantuml.ugraphic.miro.widgets.TextWidget;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
 
 import java.io.File;
@@ -22,6 +23,8 @@ import java.util.List;
 
 @Service
 public class RenderService {
+
+    private static final int MIN_WIDTH = 8;
 
     private static RenderService instance;
 
@@ -66,7 +69,9 @@ public class RenderService {
                 .setStyle(new CreateShapeReq.ShapeStyle()
                         .setBorderColor(color(shape.getColor()))
                         .setFillColor(color(shape.getBackgroundColor())))
-                .setGeometry(new CreateShapeReq.ShapeGeometry((int) (shape.getWidth()), (int) (shape.getHeight()))
+                .setGeometry(new CreateShapeReq.ShapeGeometry(
+                        Math.max(MIN_WIDTH, (int) (shape.getWidth())),
+                        Math.max(MIN_WIDTH, (int) (shape.getHeight())))
                         .setRotation((int)shape.getRotation()));
         var createRectResp = clientV2.createShape(localAccessToken.get(), localBoardId.get(), createRectReq);
         return createRectResp.getId();
@@ -123,9 +128,10 @@ public class RenderService {
         return resp.getId();
     }
 
+    @Nullable
     private static String color(String color) {
         if (color == null || !color.startsWith("ff")) {
-            return "";
+            return null;
         }
         return "#" + color.substring(2);
     }
