@@ -49,9 +49,10 @@ public class RenderService {
     }
 
     public void createPreviewImage(String accessToken, String boardId, String url) {
-        clientV2.createImage(accessToken, boardId, new CreateImageReq()
-                .setData(new CreateImageReq.ImageData(url))
-                .setPosition(new PositionDto(0.0, 0.0d)));
+        clientV2.createImage(accessToken, boardId, new CreateImageReq(
+                new CreateImageReq.ImageData(url),
+                new PositionDto(0.0, 0.0d)
+        ));
     }
 
     public void render(String accessToken, SubmitPlantumlReq req) {
