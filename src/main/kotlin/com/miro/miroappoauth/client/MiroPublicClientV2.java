@@ -1,7 +1,6 @@
 package com.miro.miroappoauth.client;
 
 import com.miro.miroappoauth.client.v2.*;
-import com.miro.miroappoauth.dto.CreateTextResp;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.client.RestTemplate;
@@ -53,7 +52,7 @@ public class MiroPublicClientV2 {
         return rest.exchange("/v2/boards/{board_id}/images", POST, request, IdResp.class, boardId).getBody();
     }
 
-    public CreateTextResp createText(
+    public IdResp createText(
             String accessToken,
             String boardId,
             CreateTextReq createTextReq
@@ -62,6 +61,6 @@ public class MiroPublicClientV2 {
         headers.setBearerAuth(accessToken);
 
         var request = new HttpEntity<>(createTextReq, headers);
-        return rest.exchange("/v2/boards/{board_id}/texts", POST, request, CreateTextResp.class, boardId).getBody();
+        return rest.exchange("/v2/boards/{board_id}/texts", POST, request, IdResp.class, boardId).getBody();
     }
 }

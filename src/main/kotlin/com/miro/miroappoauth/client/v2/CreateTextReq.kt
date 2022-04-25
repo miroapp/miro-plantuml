@@ -1,7 +1,5 @@
 package com.miro.miroappoauth.client.v2
 
-import com.miro.miroappoauth.dto.PositionDto
-
 data class CreateTextReq(
     val data: TextData,
     val position: PositionDto,

@@ -1,11 +1,10 @@
-package com.miro.miroappoauth.dto;
+package com.miro.miroappoauth.client.v1
 
-public enum LineEndType {
+enum class LineEndType {
     opaque_arrow,
     open_arrow,
     none
 }
-
 /*
     allowed values:
     "none", "opaque_block", "rhombus", "opaque_rhombus", "circle",

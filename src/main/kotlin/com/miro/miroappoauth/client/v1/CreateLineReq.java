@@ -1,8 +1,5 @@
 package com.miro.miroappoauth.client.v1;
 
-import com.miro.miroappoauth.dto.LineBorderStyle;
-import com.miro.miroappoauth.dto.LineEndType;
-import com.miro.miroappoauth.dto.LineType;
 import com.miro.miroappoauth.dto.WidgetId;
 
 /**
