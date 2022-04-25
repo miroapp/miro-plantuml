@@ -76,7 +76,7 @@ public class RenderService {
                 .setGeometry(new CreateShapeReq.ShapeGeometry(
                         Math.max(MIN_SHAPE_WIDTH, (int) (shape.getWidth())),
                         Math.max(MIN_SHAPE_WIDTH, (int) (shape.getHeight())))
-                        .setRotation((int)shape.getRotation()));
+                        .setRotation((int) shape.getRotation()));
         var createRectResp = clientV2.createShape(localAccessToken.get(), localBoardId.get(), createRectReq);
         return createRectResp.getId();
     }
@@ -119,21 +119,20 @@ public class RenderService {
     // text='POST us.miro.com/oauth/authorize', orientation=0, color='ff000000', fontSize=14, fontFamily='SansSerif'}
     @Nullable
     public String render(TextWidget text) {
-        if (StringUtils.hasText(text.getText())) {
-            var resp = clientV2.createText(localAccessToken.get(), localBoardId.get(), new CreateTextReq()
-                    .setData(new CreateTextReq.TextData(text.getText()))
-                    .setPosition(new PositionDto(text.getX(), text.getY()))
-                    .setGeometry(new CreateTextReq.TextGeometry(
-                            Math.max(MIN_TEXT_WIDTH, text.getWidth())))
-                    .setStyle(new CreateTextReq.TextStyle()
-                            .setFontSize(Integer.toString(text.getFontSize()))
-                            //.setFontFamily(text.getFontFamily())
-                    )
-            );
-            return resp.getId();
-        } else {
+        if (!StringUtils.hasText(text.getText())) {
             return null;
         }
+        var resp = clientV2.createText(localAccessToken.get(), localBoardId.get(), new CreateTextReq()
+                .setData(new CreateTextReq.TextData(text.getText()))
+                .setPosition(new PositionDto(text.getX(), text.getY()))
+                .setGeometry(new CreateTextReq.TextGeometry(
+                        Math.max(MIN_TEXT_WIDTH, text.getWidth())))
+                .setStyle(new CreateTextReq.TextStyle()
+                                .setFontSize(Integer.toString(text.getFontSize()))
+                        //.setFontFamily(text.getFontFamily())
+                )
+        );
+        return resp.getId();
 
 //        var resp = clientV1.createWidget(localAccessToken.get(), localBoardId.get(),
 //                new CreateTextReqV1(text.getText(), (int) text.getX(), (int) text.getY())
