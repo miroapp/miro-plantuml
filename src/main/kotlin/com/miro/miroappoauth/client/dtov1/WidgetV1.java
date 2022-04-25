@@ -1,4 +1,4 @@
-package com.miro.miroappoauth.dto;
+package com.miro.miroappoauth.client.dtov1;
 
 public interface WidgetV1 {
 

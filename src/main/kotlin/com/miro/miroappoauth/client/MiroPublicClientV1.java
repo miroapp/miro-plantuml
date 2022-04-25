@@ -1,7 +1,7 @@
 package com.miro.miroappoauth.client;
 
+import com.miro.miroappoauth.client.dtov1.WidgetV1;
 import com.miro.miroappoauth.dto.CreateLineResp;
-import com.miro.miroappoauth.dto.WidgetV1;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.client.RestTemplate;

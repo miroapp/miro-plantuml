@@ -1,7 +1,11 @@
 package com.miro.miroappoauth.client;
 
+import com.miro.miroappoauth.client.dtov2.CreateShapeReq;
 import com.miro.miroappoauth.client.dtov2.IdResp;
-import com.miro.miroappoauth.dto.*;
+import com.miro.miroappoauth.dto.CreateImageReq;
+import com.miro.miroappoauth.dto.CreateTextReq;
+import com.miro.miroappoauth.dto.CreateTextResp;
+import com.miro.miroappoauth.dto.UserDto;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.client.RestTemplate;
@@ -29,7 +33,7 @@ public class MiroPublicClientV2 {
         return rest.exchange("/v2/users/{userId}", GET, request, UserDto.class, userId).getBody();
     }
 
-    public CreateShapeResp createShape(
+    public IdResp createShape(
             String accessToken,
             String boardId,
             CreateShapeReq createShapeReq
@@ -38,7 +42,7 @@ public class MiroPublicClientV2 {
         headers.setBearerAuth(accessToken);
 
         var request = new HttpEntity<>(createShapeReq, headers);
-        return rest.exchange("/v2/boards/{board_id}/shapes", POST, request, CreateShapeResp.class, boardId).getBody();
+        return rest.exchange("/v2/boards/{board_id}/shapes", POST, request, IdResp.class, boardId).getBody();
     }
 
     public IdResp createImage(

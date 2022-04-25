@@ -1,5 +1,7 @@
 package com.miro.miroappoauth.dto;
 
+import com.miro.miroappoauth.client.dtov1.WidgetV1;
+
 /**
  * <a href="https://developers.miro.com/reference/line">reference/line</a>
  */
