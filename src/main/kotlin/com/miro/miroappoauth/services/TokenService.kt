@@ -2,9 +2,9 @@ package com.miro.miroappoauth.services
 
 import com.miro.miroappoauth.client.MiroAuthClient
 import com.miro.miroappoauth.client.MiroPublicClientV2
+import com.miro.miroappoauth.client.v1.AccessTokenDto
+import com.miro.miroappoauth.client.v2.UserDto
 import com.miro.miroappoauth.config.AppProperties
-import com.miro.miroappoauth.dto.AccessTokenDto
-import com.miro.miroappoauth.dto.UserDto
 import com.miro.miroappoauth.model.Token
 import com.miro.miroappoauth.model.TokenState
 import com.miro.miroappoauth.model.TokenState.*

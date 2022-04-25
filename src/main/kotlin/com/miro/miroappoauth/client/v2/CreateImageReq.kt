@@ -1,4 +1,6 @@
-package com.miro.miroappoauth.dto
+package com.miro.miroappoauth.client.v2
+
+import com.miro.miroappoauth.dto.PositionDto
 
 data class CreateImageReq(
     val data: ImageData,

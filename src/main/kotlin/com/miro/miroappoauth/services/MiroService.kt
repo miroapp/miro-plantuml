@@ -5,14 +5,10 @@ import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.exceptions.JWTVerificationException
 import com.miro.miroappoauth.client.MiroPublicClientV2
 import com.miro.miroappoauth.config.AppProperties
-import com.miro.miroappoauth.dto.UserDto
 import com.miro.miroappoauth.exceptions.UnauthorizedException
 import com.miro.miroappoauth.model.Token
-import com.miro.miroappoauth.model.TokenState.INVALID
-import com.miro.miroappoauth.model.TokenState.VALID
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
-import org.springframework.web.client.HttpClientErrorException.Unauthorized
 
 @Service
 class MiroService(

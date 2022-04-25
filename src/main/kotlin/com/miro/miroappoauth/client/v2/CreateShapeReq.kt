@@ -1,4 +1,4 @@
-package com.miro.miroappoauth.client.dtov2
+package com.miro.miroappoauth.client.v2
 
 import com.miro.miroappoauth.dto.PositionDto
 import com.miro.miroappoauth.dto.ShapeType

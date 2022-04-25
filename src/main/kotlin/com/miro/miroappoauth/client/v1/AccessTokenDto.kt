@@ -1,4 +1,4 @@
-package com.miro.miroappoauth.dto
+package com.miro.miroappoauth.client.v1
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import com.fasterxml.jackson.databind.annotation.JsonNaming

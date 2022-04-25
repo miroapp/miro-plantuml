@@ -1,6 +1,6 @@
 package com.miro.miroappoauth.client
 
-import com.miro.miroappoauth.dto.AccessTokenDto
+import com.miro.miroappoauth.client.v1.AccessTokenDto
 import org.springframework.util.LinkedMultiValueMap
 import org.springframework.web.client.RestTemplate
 

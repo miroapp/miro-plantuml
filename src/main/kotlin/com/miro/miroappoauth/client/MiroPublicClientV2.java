@@ -1,11 +1,7 @@
 package com.miro.miroappoauth.client;
 
-import com.miro.miroappoauth.client.dtov2.CreateShapeReq;
-import com.miro.miroappoauth.client.dtov2.IdResp;
-import com.miro.miroappoauth.dto.CreateImageReq;
-import com.miro.miroappoauth.dto.CreateTextReq;
+import com.miro.miroappoauth.client.v2.*;
 import com.miro.miroappoauth.dto.CreateTextResp;
-import com.miro.miroappoauth.dto.UserDto;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.client.RestTemplate;

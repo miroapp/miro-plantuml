@@ -1,6 +1,9 @@
-package com.miro.miroappoauth.dto;
+package com.miro.miroappoauth.client.v1;
 
-import com.miro.miroappoauth.client.dtov1.WidgetV1;
+import com.miro.miroappoauth.dto.LineBorderStyle;
+import com.miro.miroappoauth.dto.LineEndType;
+import com.miro.miroappoauth.dto.LineType;
+import com.miro.miroappoauth.dto.WidgetId;
 
 /**
  * <a href="https://developers.miro.com/reference/line">reference/line</a>

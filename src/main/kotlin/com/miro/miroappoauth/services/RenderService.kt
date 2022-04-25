@@ -2,11 +2,14 @@ package com.miro.miroappoauth.services
 
 import com.miro.miroappoauth.client.MiroPublicClientV1
 import com.miro.miroappoauth.client.MiroPublicClientV2
-import com.miro.miroappoauth.client.dtov2.CreateShapeReq
+import com.miro.miroappoauth.client.v1.CreateLineReq
+import com.miro.miroappoauth.client.v1.CreateLineReq.LineStyle
+import com.miro.miroappoauth.client.v2.CreateImageReq
+import com.miro.miroappoauth.client.v2.CreateShapeReq
+import com.miro.miroappoauth.client.v2.CreateTextReq
+import com.miro.miroappoauth.client.v2.CreateTextReq.TextData
+import com.miro.miroappoauth.client.v2.CreateTextReq.TextGeometry
 import com.miro.miroappoauth.dto.*
-import com.miro.miroappoauth.dto.CreateLineReq.LineStyle
-import com.miro.miroappoauth.dto.CreateTextReq.TextData
-import com.miro.miroappoauth.dto.CreateTextReq.TextGeometry
 import net.sourceforge.plantuml.ISourceFileReader
 import net.sourceforge.plantuml.Option
 import net.sourceforge.plantuml.SourceFileReader
@@ -114,18 +117,17 @@ class RenderService(
             return null
         }
         val resp = clientV2.createText(
-            localAccessToken.get(), localBoardId.get(), CreateTextReq()
-                .setData(TextData(text.text))
-                .setPosition(PositionDto(text.x, text.y))
-                .setGeometry(
-                    TextGeometry(
-                        Math.max(MIN_TEXT_WIDTH.toDouble(), text.width)
-                    )
+            localAccessToken.get(), localBoardId.get(), CreateTextReq(
+                data = TextData(text.text),
+                position = PositionDto(text.x, text.y),
+                geometry = TextGeometry(
+                    Math.max(MIN_TEXT_WIDTH.toDouble(), text.width)
+                ),
+                style = CreateTextReq.TextStyle(
+                    fontSize = Integer.toString(text.fontSize),
+                    //fontFamily = text.getFontFamily()
                 )
-                .setStyle(
-                    CreateTextReq.TextStyle()
-                        .setFontSize(Integer.toString(text.fontSize)) //.setFontFamily(text.getFontFamily())
-                )
+            )
         )
         return resp.id
 

@@ -1,6 +1,6 @@
 package com.miro.miroappoauth.model
 
-import com.miro.miroappoauth.dto.AccessTokenDto
+import com.miro.miroappoauth.client.v1.AccessTokenDto
 import java.time.Instant
 
 /**

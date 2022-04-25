@@ -1,4 +1,4 @@
-package com.miro.miroappoauth.dto;
+package com.miro.miroappoauth.client.v1;
 
 public class CreateLineResp {
 
