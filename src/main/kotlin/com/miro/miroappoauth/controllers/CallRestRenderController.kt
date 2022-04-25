@@ -32,6 +32,7 @@ class CallRestRenderController(
     }
 
     private fun formatPreviewUrl(payload: String): String {
+        // details: https://plantuml.com/text-encoding
         val transcoder = TranscoderUtil.getDefaultTranscoder()
         val encoded = transcoder.encode(payload)
         return "https://www.plantuml.com/plantuml/png/$encoded"
