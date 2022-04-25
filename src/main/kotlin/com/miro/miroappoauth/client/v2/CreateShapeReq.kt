@@ -1,7 +1,5 @@
 package com.miro.miroappoauth.client.v2
 
-import com.miro.miroappoauth.dto.ShapeType
-
 data class CreateShapeReq(
     val data: ShapeData = ShapeData(ShapeType.rectangle, ""),
     val position: PositionDto,

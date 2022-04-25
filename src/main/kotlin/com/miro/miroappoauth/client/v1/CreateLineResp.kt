@@ -1,18 +1,8 @@
-package com.miro.miroappoauth.client.v1;
+package com.miro.miroappoauth.client.v1
 
-public class CreateLineResp {
-
-    private String id;
-
-    public CreateLineResp setId(String id) {
-        this.id = id;
-        return this;
-    }
-
-    public String getId() {
-        return id;
-    }
-}
+data class CreateLineResp(
+    val id: String
+)
 
 /*
 {

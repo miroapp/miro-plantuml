@@ -2,20 +2,12 @@ package com.miro.miroappoauth.services
 
 import com.miro.miroappoauth.client.MiroPublicClientV1
 import com.miro.miroappoauth.client.MiroPublicClientV2
-import com.miro.miroappoauth.client.v1.CreateLineReq
+import com.miro.miroappoauth.client.v1.*
 import com.miro.miroappoauth.client.v1.CreateLineReq.LineStyle
-import com.miro.miroappoauth.client.v1.LineBorderStyle
-import com.miro.miroappoauth.client.v1.LineEndType
-import com.miro.miroappoauth.client.v1.LineType
-import com.miro.miroappoauth.client.v2.CreateImageReq
-import com.miro.miroappoauth.client.v2.CreateShapeReq
-import com.miro.miroappoauth.client.v2.CreateTextReq
+import com.miro.miroappoauth.client.v2.*
 import com.miro.miroappoauth.client.v2.CreateTextReq.TextData
 import com.miro.miroappoauth.client.v2.CreateTextReq.TextGeometry
-import com.miro.miroappoauth.client.v2.PositionDto
-import com.miro.miroappoauth.dto.ShapeType
 import com.miro.miroappoauth.dto.SubmitPlantumlReq
-import com.miro.miroappoauth.dto.WidgetId
 import net.sourceforge.plantuml.ISourceFileReader
 import net.sourceforge.plantuml.Option
 import net.sourceforge.plantuml.SourceFileReader
@@ -102,16 +94,16 @@ class RenderService(
     }
 
     fun render(line: LineWidget, lineWidgetsId: LineWidgetsId): String {
-        val createLineReq = CreateLineReq()
-            .setStartWidget(WidgetId(lineWidgetsId.startWidgetId))
-            .setEndWidget(WidgetId(lineWidgetsId.endWidgetId))
-            .setStyle(
-                LineStyle()
-                    .setLineStartType(LineEndType.none)
-                    .setLineEndType(LineEndType.none)
-                    .setBorderStyle(LineBorderStyle.fromString(line.stroke))
-                    .setLineType(LineType.fromString(line.type))
+        val createLineReq = CreateLineReq(
+            startWidget = WidgetId(lineWidgetsId.startWidgetId),
+            endWidget = WidgetId(lineWidgetsId.endWidgetId),
+            style = LineStyle(
+                lineStartType = LineEndType.none,
+                lineEndType = LineEndType.none,
+                borderStyle = LineBorderStyle.fromString(line.stroke),
+                lineType = LineType.fromString(line.type)
             )
+        )
         val createLineResp = clientV1.createWidget(localAccessToken.get(), localBoardId.get(), createLineReq)
         return createLineResp.id
     }
