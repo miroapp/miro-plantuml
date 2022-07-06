@@ -94,6 +94,20 @@ class RenderService(
     }
 
     fun render(line: LineWidget, lineWidgetsId: LineWidgetsId): String {
+        val createConnectorReq = CreateConnectorReq(
+            startItem = CreateConnectorReq.ItemConnection(lineWidgetsId.startWidgetId),
+            endItem = CreateConnectorReq.ItemConnection(lineWidgetsId.endWidgetId),
+            shape = LineShape.adapt(LineType.fromString(line.type)),
+            style = ConnectorStyle(
+                strokeStyle = ConnectorStyle.StrokeStyle.valueOfOrNull(line.stroke) ?: ConnectorStyle.StrokeStyle.normal,
+            )
+        )
+        return clientV2
+            .createConnector(localAccessToken.get(), localBoardId.get(), createConnectorReq)
+            .id
+    }
+
+    fun renderV1(line: LineWidget, lineWidgetsId: LineWidgetsId): String {
         val createLineReq = CreateLineReq(
             startWidget = WidgetId(lineWidgetsId.startWidgetId),
             endWidget = WidgetId(lineWidgetsId.endWidgetId),

@@ -65,4 +65,19 @@ class MiroPublicClientV2(
             boardId
         ).body!!
     }
+
+    fun createConnector(
+        accessToken: String,
+        boardId: String,
+        createConnectorReq: CreateConnectorReq
+    ): IdResp {
+        val headers = HttpHeaders().apply { setBearerAuth(accessToken) }
+        val request = HttpEntity(createConnectorReq, headers)
+
+        return rest.exchange(
+            "/v2-experimental/boards/{board_id}/connectors",
+            POST, request, IdResp::class.java,
+            boardId
+        ).body!!
+    }
 }
