@@ -69,3 +69,14 @@ sequenceDiagram
     localhost/install->>miro.com/app-install-completed: Redirect to default page
     miro.com/app-install-completed->>miro.com/app/board/{id}: Return back to the board
 ```
+
+Sample PlantUML diagram
+```plantuml
+@startuml
+Alice -> Bob: Authentication Request
+Bob --> Alice: Authentication Response
+
+Alice -> Bob: Another authentication Request
+Alice <-- Bob: Another authentication Response
+@enduml
+```

@@ -1,6 +1,6 @@
 package com.miro.miroappoauth.client.v2
 
-import com.miro.miroappoauth.client.v1.LineType
+import com.miro.miroappoauth.services.LineType
 
 enum class LineShape {
     straight,
@@ -8,9 +8,6 @@ enum class LineShape {
     curved;
 
     companion object {
-        fun valueOfOrNull(raw: String): LineShape? =
-            values().find { it.name.equals(raw, ignoreCase = true) }
-
         fun adapt(value: LineType): LineShape =
             when (value) {
                 LineType.straight -> straight

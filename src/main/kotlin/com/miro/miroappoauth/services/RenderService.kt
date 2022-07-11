@@ -1,9 +1,6 @@
 package com.miro.miroappoauth.services
 
-import com.miro.miroappoauth.client.MiroPublicClientV1
 import com.miro.miroappoauth.client.MiroPublicClientV2
-import com.miro.miroappoauth.client.v1.*
-import com.miro.miroappoauth.client.v1.CreateLineReq.LineStyle
 import com.miro.miroappoauth.client.v2.*
 import com.miro.miroappoauth.client.v2.CreateTextReq.TextData
 import com.miro.miroappoauth.client.v2.CreateTextReq.TextGeometry
@@ -26,7 +23,6 @@ import java.util.*
 
 @Service
 class RenderService(
-    private val clientV1: MiroPublicClientV1,
     private val clientV2: MiroPublicClientV2
 ) {
     private val localAccessToken = ThreadLocal<String>()
@@ -105,21 +101,6 @@ class RenderService(
         return clientV2
             .createConnector(localAccessToken.get(), localBoardId.get(), createConnectorReq)
             .id
-    }
-
-    fun renderV1(line: LineWidget, lineWidgetsId: LineWidgetsId): String {
-        val createLineReq = CreateLineReq(
-            startWidget = WidgetId(lineWidgetsId.startWidgetId),
-            endWidget = WidgetId(lineWidgetsId.endWidgetId),
-            style = LineStyle(
-                lineStartType = LineEndType.none,
-                lineEndType = LineEndType.none,
-                borderStyle = LineBorderStyle.fromString(line.stroke),
-                lineType = LineType.fromString(line.type)
-            )
-        )
-        val createLineResp = clientV1.createWidget(localAccessToken.get(), localBoardId.get(), createLineReq)
-        return createLineResp.id
     }
 
     // TextWidget{uid=064b2e93-0ae3-4a10-a36e-145624e63793, id=0, x=579.4204790480273, y=82.88888888888889,

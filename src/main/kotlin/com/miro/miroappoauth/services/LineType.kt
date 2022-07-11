@@ -1,4 +1,4 @@
-package com.miro.miroappoauth.client.v1
+package com.miro.miroappoauth.services
 
 import java.util.stream.Stream
 
