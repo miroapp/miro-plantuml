@@ -6,7 +6,7 @@ We've included this app in our example apps repo, specifically because of its us
 
 ## Stack
 - [Open-source Plant UML library](http://plantuml.com)
-- Backend: Kotlin
+- Backend: Kotlin/Java
 - Frontend: JavaScript/TypeScript
 - [Miro REST API](https://developers.miro.com/reference/api-reference)
 - [Miro Web SDK](https://developers.miro.com/docs/miro-web-sdk-introduction)
