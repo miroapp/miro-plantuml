@@ -1,7 +1,17 @@
 
-Simple application (both backend and frontend) to test Miro OAuth 2.0 installation.
+# About this App
+This application leverages both the Miro Web SDK and REST API to demonstrate a Code > Diagram use case. More specifically, it is based on an open-source Plant UML library to draw UML diagrams from their textual description/code, and present it in Miro using our [V2 REST Connector endpoints](https://developers.miro.com/reference/create-connector). 
 
-# Steps to run the application
+We've included this app in our example apps repo, specifically because of its use of our REST endpoints. To view the particular details of how the Miro REST API is called, see the supplementary READMME within, "Plant UML > Miro (V2 Connectors)" `README.md`, located at `miro-plantuml/src/main/kotlin/com/miro/miroappoauth/client/v2/README.md`.
+
+## Stack
+- [Open-source Plant UML library](http://plantuml.com)
+- Backend: Kotlin
+- Frontend: JavaScript/TypeScript
+- [Miro REST API](https://developers.miro.com/reference/api-reference)
+- [Miro Web SDK](https://developers.miro.com/docs/miro-web-sdk-introduction)
+
+## Steps to run the application
 - Register your application following [instruction](https://developers.miro.com/docs/getting-started)
   with default settings
 - Once you have "Client ID", copy `application-local_template.yml` to `application-local.yml` and fill fields:
@@ -35,7 +45,7 @@ without any IP or auth restriction.
 logs and Browser Developer Tools to see exact URLs
 * If your `teamId` parameter is set, you will have "Installation management URL" filled (e.g. to revoke the token)
 
-# Run locally with self-signed certificate
+## Run locally with self-signed certificate
 Alternatively, you can run application on localhost with SSL port:
 ```shell
 mvn clean spring-boot:run -Dspring-boot.run.profiles=ssl,local
@@ -45,21 +55,21 @@ To use HTTPS on localhost, you should enable this option in your Chrome browser
 
 chrome://flags/#allow-insecure-localhost
 
-# Run in IDEA
+## Run in IDEA
 Customize `MiroAppOAuthApplication` run configuration, you should execute Maven goal `generate-resources`
 before starting spring-boot application. Also, please provide "Active profiles" value (usually it should be `local`).
 
-# Application State page
+## Application State page
 To avoid confusion, please note, that "Session ID" and "User ID" on the "State" page are just values within your
 browser session based on cookies (this way you can check different authorizations).
 
-# Database console
+## Database console
 By default, the server starts embedded H2 database (file-based: `miro-plantuml_h2.mv.db` in the local directory),
 you can access database console at
 http://localhost:3333/h2-console (https://localhost:3333/h2-console)
 Pass JDBC URL: `jdbc:h2:file:./miro-plantuml_h2`, empty User Name and Password to Connect.
 
-# Authorization flow
+## Authorization flow
 ```mermaid
 sequenceDiagram
     miro.com/app/board/{id}->>miro.com/oauth/authorize: Embedded auth page
